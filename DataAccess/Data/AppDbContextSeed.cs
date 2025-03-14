@@ -1,13 +1,13 @@
-﻿using DataAccess.Entities;
+﻿using System.Text.Json;
+using DataAccess.Entities;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace DataAccess.Data;
 
 public static class AppDbContextSeed
 {
     public static string SeedDataPath { get; set; } =
-        Path.Combine(Directory.GetCurrentDirectory(), "DataAccess/Data/SeedData");
+        Path.Combine(Directory.GetCurrentDirectory(), "../DataAccess/Data/SeedData");
 
     public static async Task SeedAsync(AppDbContext context, ILoggerFactory loggerFactory)
     {
@@ -61,22 +61,6 @@ public static class AppDbContextSeed
                 }
             }
 
-            if (!context.OrderDetails.Any())
-            {
-                var orderDetailData = await File.ReadAllTextAsync(
-                    Path.Combine(SeedDataPath, "order_details.json")
-                );
-                var orderDetails = JsonSerializer.Deserialize<List<OrderDetail>>(orderDetailData);
-                if (orderDetails != null)
-                {
-                    foreach (var item in orderDetails)
-                    {
-                        context.OrderDetails.Add(item);
-                    }
-                    await context.SaveChangesAsync();
-                }
-            }
-
             if (!context.Orders.Any())
             {
                 var orderData = await File.ReadAllTextAsync(
@@ -88,6 +72,22 @@ public static class AppDbContextSeed
                     foreach (var item in orders)
                     {
                         context.Orders.Add(item);
+                    }
+                    await context.SaveChangesAsync();
+                }
+            }
+
+            if (!context.OrderDetails.Any())
+            {
+                var orderDetailData = await File.ReadAllTextAsync(
+                    Path.Combine(SeedDataPath, "order_details.json")
+                );
+                var orderDetails = JsonSerializer.Deserialize<List<OrderDetail>>(orderDetailData);
+                if (orderDetails != null)
+                {
+                    foreach (var item in orderDetails)
+                    {
+                        context.OrderDetails.Add(item);
                     }
                     await context.SaveChangesAsync();
                 }
