@@ -1,0 +1,51 @@
+[
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "OrderId": 1,
+    "ProductId": 1,
+    "UnitPrice": 4500000,
+    "Quantity": 2,
+    "Discount": 0.05
+  },
+  {
+    "OrderId": 1,
+    "ProductId": 3,
+    "UnitPrice": 25000000,
+    "Quantity": 1,
+    "Discount": 0.1
+  },
+  {
+    "OrderId": 2,
+    "ProductId": 2,
+    "UnitPrice": 9500000,
+    "Quantity": 1,
+    "Discount": 0.03
+  },
+  {
+    "OrderId": 2,
+    "ProductId": 4,
+    "UnitPrice": 8500000,
+    "Quantity": 2,
+    "Discount": 0
+  },
+  {
+    "OrderId": 3,
+    "ProductId": 5,
+    "UnitPrice": 1500000,
+    "Quantity": 3,
+    "Discount": 0.02
+  },
+  {
+    "OrderId": 3,
+    "ProductId": 6,
+    "UnitPrice": 40000000,
+    "Quantity": 1,
+    "Discount": 0.08
+  },
+  {
+    "OrderId": 4,
+    "ProductId": 7,
+    "UnitPrice": 20000000,
+    "Quantity": 1,
+    "Discount": 0.1
+  },
+  {
+    "OrderId": 4,
+    "ProductId": 1,
+    "UnitPrice": 4500000,
+    "Quantity": 1,
+    "Discount": 0.03
+  }
+]

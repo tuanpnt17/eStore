@@ -1,0 +1,30 @@
+[
+  {
+    "Email": "nguyenanhthu@gmail.com",
+    "CompanyName": "Vàng Bạc Anh Thu",
+    "City": "Hà Nội",
+    "Country": "Việt Nam",
+    "Password": "123456"
+  },
+  {
+    "Email": "tranbaoloc@gmail.com",
+    "CompanyName": "Kim Hoàn Bảo Lộc",
+    "City": "TP. Hồ Chí Minh",
+    "Country": "Việt Nam",
+    "Password": "loc123"
+  },
+  {
+    "Email": "phamminhhoa@gmail.com",
+    "CompanyName": "Minh Hoa Jewelry",
+    "City": "Đà Nẵng",
+    "Country": "Việt Nam",
+    "Password": "hoa456"
+  },
+  {
+    "Email": "lethanhdat@gmail.com",
+    "CompanyName": "Trang Sức Thành Đạt",
+    "City": "Cần Thơ",
+    "Country": "Việt Nam",
+    "Password": "dat789"
+  }
+]
