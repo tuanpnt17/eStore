@@ -1,33 +1,25 @@
 ﻿using DataAccess.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Collections;
 
 namespace DataAccess.Data;
 
-public class UnitOfWork(AppDbContext context) : IUnitOfWork
+public class UnitOfWork(
+    AppDbContext context,
+    IMemberRepository memberRepository,
+    ICategoryRepository categoryRepository,
+    IOrderDetailRepository orderDetailRepository,
+    IOrderRepository orderRepository,
+    IProductRepository productRepository
+) : IUnitOfWork
 {
-    private Hashtable? _repositories;
+    public IProductRepository ProductRepository { get; } = productRepository;
+    public IOrderDetailRepository OrderDetailRepository { get; } = orderDetailRepository;
+    public ICategoryRepository CategoryRepository { get; } = categoryRepository;
+    public IOrderRepository OrderRepository { get; } = orderRepository;
+    public IMemberRepository MemberRepository { get; } = memberRepository;
 
     private IDbContextTransaction? _transaction;
     private bool _disposed = false;
-
-    public IGenericRepository<T> Repository<T>()
-        where T : class
-    {
-        _repositories ??= new Hashtable();
-
-        var entityType = typeof(T).Name;
-        if (_repositories.ContainsKey(entityType))
-            return (IGenericRepository<T>)_repositories[entityType]!;
-        var repositoryType = typeof(GenericRepository<>);
-        var repositoryInstance = Activator.CreateInstance(
-            repositoryType.MakeGenericType(typeof(T)),
-            context
-        );
-        _repositories.Add(entityType, repositoryInstance);
-
-        return (IGenericRepository<T>)_repositories[entityType]!;
-    }
 
     public void Dispose()
     {
@@ -62,7 +54,7 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
         if (_transaction != null)
         {
             await _transaction.CommitAsync();
-            await _transaction.DisposeAsync();
+            Dispose();
         }
     }
 
@@ -71,7 +63,7 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
         if (_transaction != null)
         {
             await _transaction.RollbackAsync();
-            await _transaction.DisposeAsync();
+            Dispose();
         }
     }
 }

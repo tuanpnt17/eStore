@@ -2,8 +2,11 @@
 
 public interface IUnitOfWork : IDisposable
 {
-    IGenericRepository<T>? Repository<T>()
-        where T : class;
+    IProductRepository ProductRepository { get; }
+    IOrderDetailRepository OrderDetailRepository { get; }
+    ICategoryRepository CategoryRepository { get; }
+    IOrderRepository OrderRepository { get; }
+    IMemberRepository MemberRepository { get; }
 
     Task<int> Complete();
 
