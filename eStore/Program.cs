@@ -22,6 +22,7 @@ services.AddScoped<ICategoryRepository, CategoryRepository>();
 services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 services.AddScoped<IMemberRepository, MemberRepository>();
 services.AddScoped<IProductService, ProductService>();
+
 services.AddQuickGridEntityFrameworkAdapter();
 
 services.AddDatabaseDeveloperPageExceptionFilter();

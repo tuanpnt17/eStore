@@ -1,5 +1,4 @@
-﻿using DataAccess.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DataAccess.Data;
 
