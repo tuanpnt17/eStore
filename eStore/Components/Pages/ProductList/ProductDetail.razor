@@ -1,0 +1,78 @@
+﻿@page "/productsList/detail/{ProductId:int}"
+@using BusinessObject.Contracts
+@using BusinessObject.Models
+@using static BusinessObject.Models.ProductDTO
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+
+<h3>Chi tiết sản phẩm</h3>
+@if (product == null)
+{
+    <p>Đang tải dữ liệu...</p>
+}
+else
+{
+    <div class="card">
+
+        <div class="card-body">
+            <div class="mb-3">
+                <h5 class="card-title">@product.ProductName</h5>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Mã sản phẩm</label>
+                <p>@product.ProductId</p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Giá tiền</label>
+                <p>@product.UnitPrice.ToString("C")</p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Trọng lượng</label>
+                <p>@product.Weight</p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Danh mục</label>
+                <p>@product.CategoryName</p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Số lượng</label>
+                <div class="input-group">
+                    <input type="number" class="form-control text-center" @bind="quantity" min="1" style="max-width: 80px;" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-success" @onclick="AddToCart">
+                    Thêm vào giỏ hàng
+                </button>
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <a href="/productsList" class="btn btn-primary">Quay lại danh sách</a>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int ProductId { get; set; }
+    private ProductDetailsDto? product;
+    private int quantity = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            product = await ProductService.GetProductDetailsAsync(ProductId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading product: {ex.Message}");
+        }
+    }
+
+    private async Task AddToCart()
+    {
+        // TODO: Logic thêm vào giỏ hàng
+    }
+}

@@ -1,3 +1,8 @@
-﻿namespace BusinessObject.Contracts;
+﻿using static BusinessObject.Models.ProductDTO;
 
-public interface IProductService { }
+namespace BusinessObject.Contracts;
+
+public interface IProductService {
+    Task<IEnumerable<ProductListDto>> GetProductsListAsync();
+    Task<ProductDetailsDto> GetProductDetailsAsync(int productId);
+}

@@ -1,3 +1,10 @@
-﻿namespace DataAccess.Interfaces;
+﻿using DataAccess.Entities;
 
-public interface IProductRepository { }
+namespace DataAccess.Interfaces;
+
+public interface IProductRepository {
+    Task<IEnumerable<Product>> GetAllAsync();
+    Task<Product?> GetByIdAsync(int id);
+}
+
+
