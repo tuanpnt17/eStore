@@ -20,7 +20,7 @@ else
                 <div class="card h-100 shadow-sm">
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h5 class="card-title">@product.ProductName</h5>
-                        <p class="card-text">Giá: @product.UnitPrice.ToString("C")</p>
+                        <p class="card-text">Giá: @product.UnitPrice.ToString("N0")VND</p>
                         <p class="card-text">Trọng lượng: @product.Weight</p>
                         <a href="@($"/productsList/detail/{product.ProductId}")" class="btn btn-primary mt-auto">Xem chi tiết</a>
                     </div>
