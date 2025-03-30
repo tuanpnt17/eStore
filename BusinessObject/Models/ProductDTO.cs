@@ -16,5 +16,6 @@ public class ProductDTO
         public decimal UnitPrice { get; set; }
         public string Weight { get; set; } = string.Empty;
         public string CategoryName { get; set; } = string.Empty;
+        public int UnitsInStock { get; set; }
     }
 }

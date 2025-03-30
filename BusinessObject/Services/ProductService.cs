@@ -41,7 +41,8 @@ public class ProductService : IProductService {
             ProductName = product.ProductName,
             UnitPrice = product.UnitPrice,
             Weight = product.Weight,
-            CategoryName = category?.CategoryName ?? "Unknown Category"
+            CategoryName = category?.CategoryName ?? "Unknown Category",
+            UnitsInStock = product.UnitsInStock
         };
     }
 }
