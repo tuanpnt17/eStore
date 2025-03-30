@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Pages\Products\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
 
