@@ -1,8 +1,14 @@
+using Blazored.LocalStorage;
 using BusinessObject.Contracts;
 using BusinessObject.Services;
 using DataAccess.Interfaces;
 using DataAccess.Repositories;
 using eStore.Components;
+using eStore.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +28,37 @@ services.AddScoped<ICategoryRepository, CategoryRepository>();
 services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 services.AddScoped<IMemberRepository, MemberRepository>();
 services.AddScoped<IProductService, ProductService>();
+services.AddScoped<IMemberService, MemberService>();
+services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+services.AddScoped<IJWTService, JWTService>();
+
+// Configure JWT authentication
+var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]);
+services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = configuration["Jwt:Issuer"],
+        ValidAudience = configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+services.AddAuthorizationCore(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
+services.AddHttpClient();
+services.AddBlazoredLocalStorage();
 
 services.AddQuickGridEntityFrameworkAdapter();
 
@@ -41,6 +78,9 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.UseAuthentication(); // Add this line
+app.UseAuthorization();  // Add this line
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
