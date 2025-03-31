@@ -1,11 +1,15 @@
 ﻿@page "/productsList/{Page:int?}"
 @using BusinessObject.Contracts
-@using BusinessObject.Models
 @using static BusinessObject.Models.ProductDTO
+
+@layout CommonLayout
+
 @inject IProductService ProductService
 @inject NavigationManager NavigationManager
 
-<h3 class="mb-4">Danh sách sản phẩm</h3>
+
+
+<h3 class="mb-4 text-center">Danh sách sản phẩm</h3>
 
 @if (products == null)
 {
@@ -46,7 +50,7 @@ else
     private List<ProductListDto>? products;
     private List<ProductListDto> pagedProducts = new();
     private int currentPage = 1;
-    private int pageSize = 3;
+    private int pageSize = 4;
     private int totalPages = 10;
 
     [Parameter]
