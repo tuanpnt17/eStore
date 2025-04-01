@@ -1,23 +1,21 @@
 ﻿using BusinessObject.Contracts;
 using DataAccess.Entities;
 using DataAccess.Interfaces;
-using eStore;
-using Microsoft.AspNetCore.SignalR;
 
 namespace BusinessObject.Services;
 
 public class OrderService : IOrderService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IHubContext<OrderHub> _productHubContext;
+
     public OrderService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
+
     public async Task DeleteOrderAsync(int orderId)
     {
         await _unitOfWork.OrderRepository.DeleteOrderAsync(orderId);
-        await _productHubContext.Clients.All.SendAsync("ReceiveOrderDelete");
     }
 
     public async Task<List<Order>> GetAllOrdersAsync()

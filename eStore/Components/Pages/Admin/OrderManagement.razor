@@ -1,11 +1,14 @@
 ﻿@page "/admin/ordermanagement"
 @layout AdminLayout
+@using BusinessObject.Hubs
+@using Microsoft.AspNetCore.SignalR
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager Navigation
 @inject IOrderService OrderService
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 @inherits LayoutComponentBase
+@inject IHubContext<OrderHub> OrderHubContext
 @* @inject HubConnection Connection *@
 
 <h3>Orders</h3>
@@ -169,11 +172,10 @@
             .WithAutomaticReconnect()
             .Build();
 
-        hubConnection.On("ReceiveOrderDelete", async () =>
+            hubConnection.On("ReceiveOrderDelete", async () =>
         {
-            // Khi nhận được thông báo sản phẩm mới được thêm, gọi lại API để cập nhật danh sách
             Model = await OrderService.GetAllOrdersAsync();
-            StateHasChanged(); // Báo cho Blazor biết UI cần được cập nhật
+            StateHasChanged(); 
         });
 
         await hubConnection.StartAsync();
@@ -222,7 +224,7 @@
         if (confirm)
         {
             await OrderService.DeleteOrderAsync(orderId);
-            await LoadOrdersAsync();
+            await OrderHubContext.Clients.All.SendAsync("ReceiveOrderDelete");
         }
     }
     private async Task ViewOrderDetails(int orderId)
