@@ -1,15 +1,46 @@
-﻿@inherits LayoutComponentBase
-
+﻿@using BlazorBootstrap
+@using Microsoft.AspNetCore.Components.Authorization
+@using eStore.Helpers
+@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
-
+	
+    
     <main>
         <article class="content px-4">
             @Body
         </article>
     </main>
+	<div class="justify-content-end" id="navbarNav">
+		<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+			<Authorized>
+				<Dropdown Color="DropdownColor.Secondary">
+					<DropdownToggleButton>
+						<a>
+							<img src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" alt="User Avatar" class="rounded-circle" width="40" height="40">
+						</a>
+					</DropdownToggleButton>
+					<DropdownMenu Position="DropdownMenuPosition.End">
+						<DropdownItem To="#" Type="DropdownItemType.Link"><span class="dropdown-item-text">Hello, @context.User.Identity.Name</span></DropdownItem>
+						<DropdownItem To="#" Type="DropdownItemType.Link">
+							<span class="dropdown-item-text">
+								<a href="./members/edit" style="    color: black;
+    text-decoration: none">Thông tin cá nhân</a>
+							</span>
+						</DropdownItem>
+						<DropdownItem To="#" Type="DropdownItemType.Link"><a class="dropdown-item" href="#" @onclick="Logout">Logout</a></DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+			</Authorized>
+			<NotAuthorized>
+				<li><a class="dropdown-item" href="/login">Login</a></li>
+			</NotAuthorized>
+		</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+	</div>
 </div>
 
 <div id="blazor-error-ui">
@@ -17,3 +48,14 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+@code {
+    private async Task Logout()
+    {
+        if (AuthStateProvider is CustomAuthStateProvider customState)
+        {
+            await customState.UpdateAuthenticationState(null);
+        }
+
+        NavigationManager.NavigateTo("/login", forceLoad: true);
+    }
+}
