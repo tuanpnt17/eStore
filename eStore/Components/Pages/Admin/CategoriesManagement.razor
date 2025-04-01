@@ -99,7 +99,11 @@
                 </div>
                 <div class="modal-body">
                     <label>Category Name:</label>
-                    <input type="text" class="form-control" @bind-value="SelectedCategory.CategoryName" />
+                    <input type="text" class="form-control" @bind-value="SelectedCategory.CategoryName" @oninput="ClearCategoryNameError" />
+                    @if (!string.IsNullOrEmpty(CategoryNameError))
+                    {
+                        <small class="text-danger">@CategoryNameError</small>
+                    }
                     <label>Description:</label>
                     <textarea class="form-control" @bind="SelectedCategory.CategoryDescription"></textarea>
                 </div>
@@ -119,10 +123,12 @@
     private Category SelectedCategory;
     private bool showPopup = false;
     private bool isEdit = false;
-    private string SearchTerm = ""; 
+    private string SearchTerm = "";
+    private string originalCategoryName;
+    private string? CategoryNameError;
     private int CurrentPage = 1;
-    private int PageSize = 3; 
-    private int TotalPages => (int)Math.Ceiling((double)FilteredCategories.Count / PageSize); 
+    private int PageSize = 5;
+    private int TotalPages => (int)Math.Ceiling((double)FilteredCategories.Count / PageSize);
     private HubConnection hubConnection;
     protected override async Task OnInitializedAsync()
     {
@@ -135,7 +141,7 @@
                 .Build();
             hubConnection.On("ReceiveCategoryUpdate", async () =>
             {
-                await InvokeAsync(async () => await LoadCategoriesAsync());             
+                await InvokeAsync(async () => await LoadCategoriesAsync());
             });
 
             await hubConnection.StartAsync();
@@ -164,8 +170,8 @@
     // Tìm kiếm danh mục theo tên hoặc mô tả
     private async void SearchCategories()
     {
-        Categories = await CategoryService.GetAllCategoriesAsync();
-        Categories = Categories
+        //FilteredCategories = await CategoryService.GetAllCategoriesAsync();
+        FilteredCategories = Categories
         .Where(c => c.CategoryName.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
                     c.CategoryDescription.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
         .ToList();
@@ -175,33 +181,16 @@
 
     private void UpdatePagedCategories()
     {
-        PagedCategories = FilteredCategories
+        PagedCategories = FilteredCategories.OrderByDescending(n => n.CategoryId)
             .Skip((CurrentPage - 1) * PageSize)
             .Take(PageSize)
             .ToList();
         StateHasChanged();
     }
-
-    private void PreviousPage()
-    {
-        if (CurrentPage > 1)
-        {
-            CurrentPage--;
-            UpdatePagedCategories();
-        }
-    }
-
-    private void NextPage()
-    {
-        if (CurrentPage < TotalPages)
-        {
-            CurrentPage++;
-            UpdatePagedCategories();
-        }
-    }
     private void ShowAddCategoryPopup()
     {
-        SelectedCategory = new Category() { CategoryName = ""};
+        SelectedCategory = new Category() { CategoryName = "" };
+        originalCategoryName = "";
         isEdit = false;
         showPopup = true;
     }
@@ -209,30 +198,61 @@
     {
         if (category == null) return;
         SelectedCategory = category;
+        originalCategoryName = category.CategoryName;
         isEdit = true;
         showPopup = true;
+        CategoryNameError = "";
     }
 
     private void ClosePopup()
     {
         showPopup = false;
+        CategoryNameError = "";
     }
-
+    private void ClearCategoryNameError(ChangeEventArgs e)
+    {
+        SelectedCategory.CategoryName = e.Value?.ToString() ?? "";
+        CategoryNameError = "";
+        StateHasChanged();
+    }
     private async Task SaveCategory()
     {
         if (SelectedCategory == null || string.IsNullOrWhiteSpace(SelectedCategory.CategoryName))
         {
-            await JSRuntime.InvokeVoidAsync("alert", "Category Name is required.");
+            CategoryNameError = "Tên danh mục không được để trống.";
             return;
         }
+        bool isDuplicate = false;
+        if (isEdit)
+        {
+            // Khi chỉnh sửa, kiểm tra các danh mục khác (ngoại trừ danh mục hiện tại)
+            isDuplicate = Categories.Any(c => c.CategoryId != SelectedCategory.CategoryId &&
+                                             c.CategoryName.Equals(SelectedCategory.CategoryName, StringComparison.OrdinalIgnoreCase));
+        }
+        else
+        {
+            // Khi tạo mới, kiểm tra toàn bộ danh sách
+            isDuplicate = Categories.Any(c => c.CategoryName.Equals(SelectedCategory.CategoryName, StringComparison.OrdinalIgnoreCase));
+        }
 
+        if (isDuplicate)
+        {
+            CategoryNameError = "Tên danh mục đã tồn tại. Vui lòng chọn tên khác.";
+            if (isEdit)
+            {
+                SelectedCategory.CategoryName = originalCategoryName;
+            }
+            StateHasChanged();
+            return;
+        }
+        else CategoryNameError = "";
         try
         {
             if (isEdit)
             {
-                await CategoryService.UpdateCategoryAsync(SelectedCategory);            
-               
-                    await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
+                await CategoryService.UpdateCategoryAsync(SelectedCategory);
+
+                await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
             }
             else
             {
@@ -243,7 +263,7 @@
                     });
                 if (hubConnection?.State == HubConnectionState.Connected)
                     await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
-                    
+
             }
             showPopup = false;
         }
@@ -271,7 +291,7 @@
             // Proceed with deletion
             await CategoryService.DeleteCategoryAsync(categoryId);
 
-                await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
+            await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
         }
         catch (Exception ex)
         {

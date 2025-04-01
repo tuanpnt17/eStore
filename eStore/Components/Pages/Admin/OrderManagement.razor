@@ -13,11 +13,6 @@
 
 <h3>Orders</h3>
 <!-- Search Filter -->
-@* <div class="d-flex mb-3">
-    <input type="date" class="form-control me-2" @bind="StartOrderDate" />
-    <input type="date" class="form-control me-2" @bind="EndOrderDate" />
-    <button class="btn btn-primary" @onclick="SearchOrders">Search</button>
-</div> *@
 <div class="d-flex mb-3">
     <div class="me-2">
         <input type="date" class="form-control" @bind="StartOrderDate" />
@@ -39,11 +34,11 @@
     <thead>
         <tr>
             <th>Order ID</th>
-            <th>Member ID</th>
+            <th>Member</th>
             <th>Order Date</th>
             <th>Required Date</th>
             <th>Shipped Date</th>
-            <th>Freight</th>
+            <th>Total</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -52,14 +47,14 @@
         {
             <tr>
                 <td>@order.OrderId</td>
-                <td>@order.MemberId</td>
+                <td>@order.Member.Email</td>
                 <td>@order.OrderDate.ToShortDateString()</td>
                 <td>@order.RequiredDate?.ToShortDateString()</td>
                 <td>@order.ShippedDate?.ToShortDateString()</td>
                 <td>@order.Freight</td>
                 <td>
-                    <button class="btn btn-primary btn-sm" @onclick="() => EditOrder(order)">Edit</button>
-                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteOrder(order.OrderId)">Delete</button>
+                    @* <button class="btn btn-primary btn-sm" @onclick="() => EditOrder(order)">Edit</button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteOrder(order.OrderId)">Delete</button> *@
                     <button class="btn btn-info btn-sm" @onclick="() => ViewOrderDetails(order.OrderId)">View Details</button>
                 </td>
             </tr>
@@ -156,23 +151,63 @@
     <div class="modal-backdrop fade show"></div>
 }
 <!-- Pagination -->
-<div class="d-flex">
-    <button class="btn btn-secondary" @onclick="PreviousPage" disabled="@(!CanGoPrevious)">Previous</button>
-    <span>Page @CurrentPage of @TotalPages</span>
-    <button class="btn btn-secondary" @onclick="NextPage" disabled="@(!CanGoNext)">Next</button>
-</div>
-<button class="btn btn-primary" @onclick="UpdateOrderList">Update Orders</button>
+<nav>
+    <ul class="pagination justify-content-center mt-3">
+        <li class="page-item @(CurrentPage > 1 ? "" : "disabled")">
+            <button class="page-link" @onclick="async () => await GoToPage(CurrentPage - 1)">Trước</button>
+        </li>
+
+        @if (TotalPages <= 7)
+        {
+            @for (int i = 1; i <= TotalPages; i++)
+            {
+                int pageNumber = i;
+                <li class="page-item @(CurrentPage == i ? "active" : "")">
+                    <button class="page-link" @onclick="async () => await GoToPage(pageNumber)">@pageNumber</button>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="page-item @(CurrentPage == 1 ? "active" : "")">
+                <button class="page-link" @onclick="async () => await GoToPage(1)">1</button>
+            </li>
+            @if (CurrentPage > 4)
+            {
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            }
+            @for (int i = Math.Max(2, CurrentPage - 2); i <= Math.Min(TotalPages - 1, CurrentPage + 2); i++)
+            {
+                int pageNumber = i;
+                <li class="page-item @(CurrentPage == i ? "active" : "")">
+                    <button class="page-link" @onclick="async () => await GoToPage(pageNumber)">@pageNumber</button>
+                </li>
+            }
+            @if (CurrentPage < TotalPages - 3)
+            {
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            }
+            <li class="page-item @(CurrentPage == TotalPages ? "active" : "")">
+                <button class="page-link" @onclick="async () => await GoToPage(TotalPages)">@TotalPages</button>
+            </li>
+        }
+        <li class="page-item @(CurrentPage < TotalPages ? "" : "disabled")">
+            <button class="page-link" @onclick="async () => await GoToPage(CurrentPage + 1)">Sau</button>
+        </li>
+    </ul>
+</nav>
 @code {
     private List<Order> Model = new List<Order>();
     private List<OrderDetail> SelectedOrderDetails = new List<OrderDetail>();
     private List<Order> PagedOrders = new List<Order>();
+    private List<Order> FilteredOrders = new List<Order>();
     private Order SelectedOrder;
     private bool showEditPopup = false;
     private bool showDetails = false;
     private int SelectedOrderId;
     private int CurrentPage = 1;
-    private int PageSize = 2;
-    private int TotalPages => (int)Math.Ceiling((double)Model.Count / PageSize);
+    private int PageSize = 5;
+    private int TotalPages => (int)Math.Ceiling((double)FilteredOrders.Count / PageSize);
     private bool CanGoPrevious => CurrentPage > 1;
     private bool CanGoNext => CurrentPage < TotalPages;
     private DateTime? _startOrderDate;
@@ -204,13 +239,12 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadOrdersAsync();
-        UpdatePagedOrders();
         try
         {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri(OrderHub.HubUrl))
-            .WithAutomaticReconnect()
-            .Build();
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri(OrderHub.HubUrl))
+                .WithAutomaticReconnect()
+                .Build();
 
             hubConnection.On("ReceiveOrderDelete", async () =>
         {
@@ -218,7 +252,7 @@
             StateHasChanged(); 
         });
 
-        await hubConnection.StartAsync();
+            await hubConnection.StartAsync();
             Console.WriteLine("SignalR connected successfully!");
         }
         catch (Exception ex)
@@ -226,37 +260,25 @@
             await JSRuntime.InvokeVoidAsync("console.error", $"SignalR connection failed: {ex.Message}");
         }
     }
-    private async Task UpdateOrderList()
+    private async Task GoToPage(int pageNumber)
     {
-        await hubConnection.SendAsync("NotifyOrderUpdated"); // Gửi sự kiện đến tất cả client
+        if (pageNumber < 1 || pageNumber > TotalPages) return;
+        CurrentPage = pageNumber;
+        UpdatePagedOrders();
     }
     private async Task LoadOrdersAsync()
     {
         Model = await OrderService.GetAllOrdersAsync();
-        UpdatePagedOrders();
+        FilteredOrders = Model.ToList();
+        SearchOrders();
+        StateHasChanged();
     }
     private void UpdatePagedOrders()
     {
-        PagedOrders = Model.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+        PagedOrders = FilteredOrders.OrderByDescending(n => n.OrderDate).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+        StateHasChanged();
     }
 
-    private void NextPage()
-    {
-        if (CanGoNext)
-        {
-            CurrentPage++;
-            UpdatePagedOrders();
-        }
-    }
-
-    private void PreviousPage()
-    {
-        if (CanGoPrevious)
-        {
-            CurrentPage--;
-            UpdatePagedOrders();
-        }
-    }
 
     private async Task DeleteOrder(int orderId)
     {
@@ -351,15 +373,24 @@
 
     private async Task SearchOrders()
     {
-        // Không reset lỗi ở đây, để lỗi hiển thị từ ValidateDates
-        if (string.IsNullOrEmpty(StartDateError) && string.IsNullOrEmpty(EndDateError))
+        if (!string.IsNullOrEmpty(StartDateError) || !string.IsNullOrEmpty(EndDateError))
         {
-            // Thực hiện tìm kiếm nếu không có lỗi
-            var result = await OrderService.GetAllOrdersAsync();
-            Model = result.Where(o => o.OrderDate >= StartOrderDate && o.OrderDate <= EndOrderDate).ToList();
-            CurrentPage = 1;
-            UpdatePagedOrders();
+            return;
         }
+        if (!StartOrderDate.HasValue && !EndOrderDate.HasValue)
+        {
+            FilteredOrders = Model.ToList();
+        }
+        else
+        {
+            // Use a very early date if StartOrderDate is null
+            var startDate = StartOrderDate ?? DateTime.MinValue;
+            // Use a very late date if EndOrderDate is null
+            var endDate = EndOrderDate ?? DateTime.MaxValue;
+            FilteredOrders = Model.Where(o => o.OrderDate.Date >= StartOrderDate && o.OrderDate.Date <= EndOrderDate).ToList();
+        }
+            CurrentPage = 1;           
+        UpdatePagedOrders();
     }
     public async ValueTask DisposeAsync()
     {

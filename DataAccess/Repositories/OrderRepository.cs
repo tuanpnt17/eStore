@@ -15,7 +15,7 @@ public class OrderRepository(AppDbContext context) : IOrderRepository
 
     public async Task<List<Order>> GetAllOrdersAsync()
     {
-       return await context.Orders.Include(n => n.OrderDetails).ThenInclude(od => od.Product).ToListAsync();
+       return await context.Orders.Include(m => m.Member).Include(n => n.OrderDetails).ThenInclude(od => od.Product).ToListAsync();
     }
 
     public async Task<Order> GetOrderByIdAsync(int Id)
@@ -27,5 +27,12 @@ public class OrderRepository(AppDbContext context) : IOrderRepository
     {
         context.Orders.Update(order);
         await context.SaveChangesAsync();
+    }
+    public async Task<List<Order>> GetOrderByUserIdAsync(int UserId)
+    {
+        return await context.Orders.Where(o => o.MemberId == UserId)
+            .Include(o => o.OrderDetails)
+            .ThenInclude(od => od.Product).ToListAsync();
+            ;
     }
 }

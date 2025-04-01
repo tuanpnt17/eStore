@@ -8,4 +8,5 @@ public interface IOrderRepository
     Task<Order> GetOrderByIdAsync(int Id);
     Task UpdateOrderAsync(Order order);
     Task DeleteOrderAsync(int Id);
+    Task<List<Order>> GetOrderByUserIdAsync(int UserId);
 }
