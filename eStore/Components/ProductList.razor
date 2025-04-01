@@ -16,6 +16,8 @@
         }
         else
         {
+            
+            <h3 class="mb-4 text-center">Danh sách sản phẩm</h3>
             <div class="row">
                 @foreach (var product in pagedProducts)
                 {
@@ -25,7 +27,7 @@
                                 <h5 class="card-title">@product.ProductName</h5>
                                 <p class="card-text">Giá: @product.UnitPrice.ToString("N0")VND</p>
                                 <p class="card-text">Trọng lượng: @product.Weight</p>
-                                <a href="@($"/productsList/detail/{product.ProductId}")" class="btn btn-primary mt-auto">Xem chi tiết</a>
+                                <a href="@($"/detail/{product.ProductId}")" class="btn btn-primary mt-auto">Xem chi tiết</a>
                             </div>
                         </div>
                     </div>
@@ -38,7 +40,7 @@
                     @for (int i = 1; i <= totalPages; i++)
                     {
                         <li class="page-item @(i == currentPage ? "active" : "")">
-                            <a class="page-link" href="@($"/productsList/{i}")">@i</a>
+                            <a class="page-link" href="@($"/{i}")">@i</a>
                         </li>
                     }
                 </ul>
@@ -46,7 +48,6 @@
         }
     </Authorized>
 </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
-<h3 class="mb-4 text-center">Danh sách sản phẩm</h3>
 
 
 
