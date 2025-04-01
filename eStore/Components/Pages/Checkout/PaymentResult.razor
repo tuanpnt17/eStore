@@ -1,0 +1,109 @@
+﻿@page "/payment-result"  
+@using BusinessObject.Models  
+@using Microsoft.EntityFrameworkCore.Metadata.Internal  
+@using VNPAY.NET  
+@using Microsoft.AspNetCore.WebUtilities  
+@using Microsoft.Extensions.Primitives
+@inject NavigationManager NavigationManager  
+@inject IVnpay Vnpayment  
+@inject ICartService CartService  
+
+@if (VnPayPaymentResult != null)  
+{  
+   <div class="container text-center mt-5">  
+       @if (VnPayPaymentResult.IsSuccess)  
+       {  
+           <h2 style="color: green">Thanh toán thành công!</h2>  
+       }  
+       else  
+       {  
+           <h2 style="color: orangered">Thanh toán thất bại!</h2>  
+       }  
+       <table class="table mt-3">  
+           <tbody>  
+               <tr>  
+                   <th>Amount</th>  
+                   <td>@_totalPrice.ToString("N0") VND</td>  
+               </tr>  
+               <tr>  
+                   <th>Payment Method</th>  
+                   <td>@VnPayPaymentResult?.PaymentMethod</td>  
+               </tr>  
+               <tr>  
+                   <th>Transaction ID</th>  
+                   <td>@VnPayPaymentResult?.VnpayTransactionId</td>  
+               </tr>  
+               <tr>  
+                   <th>Date</th>  
+                   <td>@VnPayPaymentResult?.Timestamp.ToString()</td>  
+               </tr>  
+           </tbody>  
+       </table>  
+       <button class="btn btn-primary" @onclick="HanldeNavigate">Return Home</button>  
+   </div>  
+
+}  
+else if (ErrorMessage != null)  
+{  
+   <div class="alert alert-danger">@ErrorMessage</div>  
+}  
+
+<style>  
+   .container {  
+       max-width: 600px;  
+       margin: auto;  
+       padding: 20px;  
+       border: 1px solid #ccc;  
+       border-radius: 10px;  
+       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  
+       background: #fff;  
+   }  
+</style>  
+
+@code {  
+   private VNPAY.NET.Models.PaymentResult? VnPayPaymentResult;  
+   private CartDTO? _cartDTO;  
+   private decimal _totalPrice;  
+   private string? ErrorMessage;  
+   private string? NavigateToUrl;  
+
+   protected override async Task OnInitializedAsync()  
+   {  
+       var uri = new Uri(NavigationManager.Uri);  
+       IQueryCollection query = new QueryCollection(QueryHelpers.ParseQuery(uri.Query));   
+
+       if (!string.IsNullOrEmpty(uri.Query))  
+       {  
+           try  
+           {  
+               VnPayPaymentResult = Vnpayment.GetPaymentResult(query);  
+               if (VnPayPaymentResult.IsSuccess)  
+               {  
+                   // create order  
+                   var cart = await CartService.GetCartAsync("1");  
+                   if (cart != null)  
+                   {  
+                       _cartDTO = cart;  
+                       _totalPrice = _cartDTO.Items.Sum(i => i.Price * i.Quantity * ((decimal)(100 - i.Discount) / 100));  
+                       // new order from cart  
+                       // save order to db  
+                       // remove cart items  
+                   }  
+               }  
+           }  
+           catch (Exception ex)  
+           {  
+               ErrorMessage = ex.Message;  
+           }  
+       }  
+       else  
+       {  
+           NavigationManager.NavigateTo("/");  
+       }  
+   }  
+
+   private void HanldeNavigate()  
+   {  
+       NavigationManager.NavigateTo("/");  
+   }  
+}

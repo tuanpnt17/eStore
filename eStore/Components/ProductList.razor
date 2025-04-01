@@ -1,0 +1,84 @@
+﻿@page "/{Page:int?}"
+@using BusinessObject.Contracts
+@using static BusinessObject.Models.ProductDTO
+
+@layout CommonLayout
+
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+
+
+<Microsoft.AspNetCore.Components.Authorization.AuthorizeView Roles="Member, Admin">
+    <Authorized>
+        @if (products == null)
+        {
+            <p>Đang tải dữ liệu...</p>
+        }
+        else
+        {
+            
+            <h3 class="mb-4 text-center">Danh sách sản phẩm</h3>
+            <div class="row">
+                @foreach (var product in pagedProducts)
+                {
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title">@product.ProductName</h5>
+                                <p class="card-text">Giá: @product.UnitPrice.ToString("N0")VND</p>
+                                <p class="card-text">Trọng lượng: @product.Weight</p>
+                                <a href="@($"/detail/{product.ProductId}")" class="btn btn-primary mt-auto">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Pagination -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="@($"/{i}")">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </Authorized>
+</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+
+
+@code {
+    private List<ProductListDto>? products;
+    private List<ProductListDto> pagedProducts = new();
+    private int currentPage = 1;
+    private int pageSize = 4;
+    private int totalPages = 10;
+
+    [Parameter]
+    public int? Page { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            var productList = await ProductService.GetProductsListAsync();
+            products = productList.ToList();
+
+            currentPage = Page ?? 1;
+            totalPages = (int)Math.Ceiling((double)products.Count / pageSize);
+
+            pagedProducts = products
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading products: {ex.Message}");
+        }
+    }
+}

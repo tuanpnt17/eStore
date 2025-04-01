@@ -1,0 +1,200 @@
+﻿@page "/cart"
+@using BusinessObject.Models
+@using Microsoft.EntityFrameworkCore
+@using DataAccess.Entities
+@using DataAccess.Data
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+
+@inject ICartService CartService
+@inject IMapper Mapper
+@inject SweetAlertService Swal;
+@inject NavigationManager NavigationManager
+
+<PageTitle>Giỏ hàng</PageTitle>
+
+<h1>Giỏ hàng</h1>
+
+<table class="table table-bordered align-middle">
+    <thead>
+        <tr>
+            <th style="width: 5%;">STT</th>
+            <th style="width: 50%;">Tên sản phẩm</th>
+            <th style="width: 20%; text-align: center;">Số lượng</th>
+            <th style="width: 25%; text-align: center;">Tổng giá</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (_cartDto != null && _cartDto.Items.Any())
+        {
+            @foreach (var (item, index) in _cartDto.Items.Select((value, i) => (value, i + 1)))
+            {
+                <tr>
+                    <td class="text-center">@index</td>
+                    <td>
+                        <div class="d-flex">
+                            <div>
+                                <strong>@item.ProductName</strong>
+                                <p class="mb-1">Giá: @item.Price.ToString("N0") VND</p>
+                                <a @onclick="() => RemoveFromCart(item.Id)" class="text-danger"><i class="bi bi-trash"></i> Xóa</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-evenly align-items-center gap-2">
+                            <button class="btn btn-lg btn-outline-primary fw-bold" style="width: 50px; height: 50px" type="button" @onclick="() => DecreaseQuantity(item.Id)">
+                                -
+                            </button>
+                            <input type="number" style="width: 100px;" class="form-control form-control-lg text-center quantity-input" @bind="item.Quantity" @bind:event="oninput" @onchange="() => UpdateQuantity(item.Id)" min="1" />
+                            <button class="btn btn-lg btn-outline-primary fw-bold" style="width: 50px; height: 50px" type="button" @onclick="() => IncreaseQuantity(item.Id)">
+                                +
+                            </button>
+                        </div>
+                    </td>
+                    @{
+                        var subTotalPrice = item.Price * (decimal)item.Quantity;
+                        var subTotalPriceFormat = subTotalPrice.ToString("N0");
+                        var actualSubTotalPrice = item.Price * item.Quantity * ((decimal)(100 - item.Discount) / 100);
+                        var actualSubTotalPriceFormat = actualSubTotalPrice.ToString("N0");
+                    }
+                    <td class="text-center">
+                        <div style="text-decoration: line-through">@(subTotalPriceFormat) VND</div>
+                        <div class="text-primary">@(actualSubTotalPriceFormat) VND</div>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="4" class="text-center">Giỏ hàng trống</td></tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <h5 class="text-danger">Tổng cộng: <strong>@_totalPrice.ToString("N0") VND</strong></h5>
+    <div>
+        <button @onclick="NavigateToHome" class="btn btn-warning ms-lg-2">MUA THÊM</button>
+        @if (_cartDto != null && _cartDto.Items.Any()) {
+            <button @onclick="RemoveAllCart" class="btn btn-warning ms-lg-2">XÓA TẤT CẢ</button>
+            <button @onclick="NavigateToCheckout" class="btn btn-warning ms-lg-2">ĐẶT HÀNG</button>
+        }
+    </div>
+</div>
+
+@code {
+    private CartDTO _cartDto;
+    private decimal _totalPrice = 0;
+
+    [CascadingParameter]
+    private Func<int, Task>? OnCartUpdated { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCart();
+    }
+
+    private async Task LoadCart()
+    {
+        var serverCart = await CartService.GetCartAsync("1") ?? new CartDTO()
+            {
+                Id = "1"
+            };
+        _cartDto = serverCart;
+        CalculateTotalPrice();
+    }
+
+    private void CalculateTotalPrice()
+    {
+        _totalPrice = _cartDto?.Items?.Sum(i => i.Price * i.Quantity * ((decimal)(100 - i.Discount) / 100)) ?? 0;
+    }
+
+    private async Task RemoveFromCart(int productId)
+    {
+        var cartItem = _cartDto.Items.FirstOrDefault(x => x.Id == productId);
+        if (cartItem == null) return;
+        _cartDto.Items.Remove(cartItem);
+        await CartService.UpdateCartAsync(_cartDto);
+        if (OnCartUpdated != null)
+        {
+            await OnCartUpdated(_cartDto.Items.Count);
+        }
+        CalculateTotalPrice();
+        StateHasChanged();
+    }
+
+    private async Task IncreaseQuantity(int productId)
+    {
+        var cartItem = _cartDto.Items.FirstOrDefault(x => x.Id == productId);
+        if (cartItem == null) return;
+        if (cartItem.Quantity >= cartItem.UnitsInStock)
+        {
+            await Swal.FireAsync("Oops...", $"Chỉ còn {cartItem.UnitsInStock} sản phẩm", "error");
+            return;
+        }
+
+        cartItem.Quantity++;
+        await CartService.UpdateCartAsync(_cartDto);
+        CalculateTotalPrice();
+        StateHasChanged();
+    }
+
+    private async Task DecreaseQuantity(int productId)
+    {
+        var cartItem = _cartDto.Items.FirstOrDefault(x => x.Id == productId);
+        if (cartItem == null) return;
+        if (cartItem.Quantity == 1)
+        {
+            await RemoveFromCart(productId);
+            return;
+        }
+        cartItem.Quantity--;
+        await CartService.UpdateCartAsync(_cartDto);
+        CalculateTotalPrice();
+        StateHasChanged();
+    }
+
+    private async Task UpdateQuantity(int productId)
+    {
+        var cartItem = _cartDto.Items.FirstOrDefault(x => x.Id == productId);
+        if (cartItem == null) return;
+
+        if (cartItem.Quantity <= 0)
+        {
+            await RemoveFromCart(productId);
+            return;
+        }
+
+        if (cartItem.Quantity > cartItem.UnitsInStock)
+        {
+            cartItem.Quantity = cartItem.UnitsInStock;
+            await Swal.FireAsync("Oops...", $"Chỉ còn {cartItem.UnitsInStock} sản phẩm", "error");
+        }
+
+        await CartService.UpdateCartAsync(_cartDto);
+        CalculateTotalPrice();
+        StateHasChanged();
+    }
+
+    private void NavigateToHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private async Task RemoveAllCart()
+    {
+        _cartDto.Items.Clear();
+        await CartService.UpdateCartAsync(_cartDto);
+        if (OnCartUpdated != null)
+        {
+            await OnCartUpdated(_cartDto.Items.Count);
+        }
+        CalculateTotalPrice();
+        StateHasChanged();
+    }
+
+    private void NavigateToCheckout()
+    {
+        NavigationManager.NavigateTo("/checkout");
+    }
+
+}
