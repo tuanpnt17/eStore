@@ -53,7 +53,7 @@ else
     [SupplyParameterFromForm]
     private MemberDTO? Member { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         Member = await MemberService.GetMember(MemberId);
         

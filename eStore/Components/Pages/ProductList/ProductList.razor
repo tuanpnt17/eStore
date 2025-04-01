@@ -1,11 +1,9 @@
 ﻿@page "/productsList/{Page:int?}"
 @using BusinessObject.Contracts
 @using BusinessObject.Models
-@using Microsoft.AspNetCore.Authorization
 @using static BusinessObject.Models.ProductDTO
 @inject IProductService ProductService
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
 
 <h3>Secure Data</h3>
 <p>This page is only accessible to authenticated users.</p>

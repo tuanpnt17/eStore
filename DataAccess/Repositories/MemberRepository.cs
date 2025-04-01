@@ -6,14 +6,14 @@ namespace DataAccess.Repositories;
 
 public class MemberRepository(AppDbContext context) : IMemberRepository
 {
-    public Task<Member> GetMemberById(int memberId)
+    public async Task<Member> GetMemberById(int memberId)
     {
-        return context.Members.FirstOrDefaultAsync(x => x.MemberId == memberId);
+        return await context.Members.FirstOrDefaultAsync(x => x.MemberId == memberId);
     }
 
-    public Task<Member> Login(string username, string password)
+    public async Task<Member> Login(string username, string password)
     {
-        return context.Members.FirstOrDefaultAsync(x => x.Password == password && x.Email == username);
+        return await context.Members.FirstOrDefaultAsync(x => x.Password == password && x.Email == username);
     }
 
     public void Register(Member member)
