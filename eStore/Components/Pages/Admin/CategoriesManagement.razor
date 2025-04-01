@@ -10,21 +10,21 @@
 @rendermode InteractiveServer
 @inherits LayoutComponentBase
 @inject IHubContext<CategoryHub> CategoryHubContext
-<h3>Categories Manager</h3>
+<h3>Quản lý danh mục</h3>
 <div class="mb-3 d-flex">
-    <input type="text" class="form-control me-2" placeholder="Search by Name or Description..." @bind="SearchTerm" />
+    <input type="text" class="form-control me-2" placeholder="Tìm kiếm theo Tên hoặc Mô tả..." @bind="SearchTerm" />
     <button class="btn btn-primary" @onclick="SearchCategories">Search</button>
 </div>
 <!-- Add New Category Button -->
-<button class="btn btn-success mb-3" @onclick="ShowAddCategoryPopup">Add New Category</button>
+<button class="btn btn-success mb-3" @onclick="ShowAddCategoryPopup">Thêm danh mục mới</button>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Category ID</th>
-            <th>Category Name</th>
-            <th>Description</th>
-            <th>Actions</th>
+            <th>ID</th>
+            <th>Tên danh mục</th>
+            <th>Mô tả</th>
+            <th>Hành động</th>
         </tr>
     </thead>
     <tbody>
@@ -35,8 +35,8 @@
                 <td>@category.CategoryName</td>
                 <td>@category.CategoryDescription</td>
                 <td>
-                    <button class="btn btn-primary btn-sm" @onclick="() => EditCategory(category)">Edit</button>
-                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteCategory(category.CategoryId)">Delete</button>
+                    <button class="btn btn-primary btn-sm" @onclick="() => EditCategory(category)">Chỉnh sửa</button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteCategory(category.CategoryId)">Xoá</button>
                 </td>
             </tr>
         }
@@ -94,12 +94,12 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@(isEdit ? "Edit" : "Add") Category</h5>
+                    <h5 class="modal-title">@(isEdit ? "Edit" : "Add") danh mục</h5>
                     <button type="button" class="btn-close" @onclick="ClosePopup"></button>
                 </div>
                 <div class="modal-body">
                     <label>Category Name:</label>
-                    <input type="text" class="form-control" @bind-value="SelectedCategory.CategoryName" @oninput="ClearCategoryNameError" />
+                    <input type="text" class="form-control" @bind-value="SelectedCategory.CategoryName" />
                     @if (!string.IsNullOrEmpty(CategoryNameError))
                     {
                         <small class="text-danger">@CategoryNameError</small>
@@ -108,8 +108,8 @@
                     <textarea class="form-control" @bind="SelectedCategory.CategoryDescription"></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="ClosePopup">Cancel</button>
-                    <button type="button" class="btn btn-primary" @onclick="SaveCategory">Save</button>
+                    <button type="button" class="btn btn-secondary" @onclick="ClosePopup">Huỷ</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveCategory">Lưu</button>
                 </div>
             </div>
         </div>
@@ -142,6 +142,7 @@
             hubConnection.On("ReceiveCategoryUpdate", async () =>
             {
                 await InvokeAsync(async () => await LoadCategoriesAsync());
+                StateHasChanged();
             });
 
             await hubConnection.StartAsync();
@@ -211,9 +212,9 @@
     }
     private void ClearCategoryNameError(ChangeEventArgs e)
     {
-        SelectedCategory.CategoryName = e.Value?.ToString() ?? "";
+        //SelectedCategory.CategoryName = e.Value?.ToString() ?? "";
         CategoryNameError = "";
-        StateHasChanged();
+        //StateHasChanged();
     }
     private async Task SaveCategory()
     {
@@ -242,7 +243,7 @@
             {
                 SelectedCategory.CategoryName = originalCategoryName;
             }
-            StateHasChanged();
+            //StateHasChanged();
             return;
         }
         else CategoryNameError = "";
@@ -251,7 +252,6 @@
             if (isEdit)
             {
                 await CategoryService.UpdateCategoryAsync(SelectedCategory);
-
                 await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
             }
             else
@@ -275,7 +275,7 @@
 
     private async Task DeleteCategory(int categoryId)
     {
-        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this category?");
+        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Bạn có chắc chắn muốn xóa danh mục này không?");
         if (!confirm) return;
 
         try
@@ -284,7 +284,7 @@
             var productsInCategory = await CategoryService.IsCategoryInUseAsync(categoryId); // Assumed method
             if (productsInCategory)
             {
-                await JSRuntime.InvokeVoidAsync("alert", "Cannot delete this category because it is associated with one or more products.");
+                await JSRuntime.InvokeVoidAsync("alert", "Không thể xóa danh mục này vì nó liên quan đến một hoặc nhiều sản phẩm.");
                 return;
             }
 
@@ -295,7 +295,7 @@
         }
         catch (Exception ex)
         {
-            await JSRuntime.InvokeVoidAsync("alert", $"Failed to delete category: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", $"Không xóa được danh mục: {ex.Message}");
         }
     }
 }

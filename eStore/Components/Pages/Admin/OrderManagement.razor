@@ -11,7 +11,7 @@
 @inject IHubContext<OrderHub> OrderHubContext
 @* @inject HubConnection Connection *@
 
-<h3>Orders</h3>
+<h3>Quản lý đơn hàng</h3>
 <!-- Search Filter -->
 <div class="d-flex mb-3">
     <div class="me-2">
@@ -33,13 +33,13 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Order ID</th>
-            <th>Member</th>
-            <th>Order Date</th>
-            <th>Required Date</th>
-            <th>Shipped Date</th>
-            <th>Total</th>
-            <th>Actions</th>
+            <th>ID</th>
+            <th>Tên khách hàng</th>
+            <th>Ngày đặt hàng</th>
+            <th>Ngày yêu cầu</th>
+            <th>Ngày giao hàng</th>
+            <th>Tổng cộng</th>
+            <th>Hành động</th>
         </tr>
     </thead>
     <tbody>
@@ -51,7 +51,7 @@
                 <td>@order.OrderDate.ToShortDateString()</td>
                 <td>@order.RequiredDate?.ToShortDateString()</td>
                 <td>@order.ShippedDate?.ToShortDateString()</td>
-                <td>@order.Freight</td>
+                <td>@order.Freight?.ToString("N0") VND</td>
                 <td>
                     @* <button class="btn btn-primary btn-sm" @onclick="() => EditOrder(order)">Edit</button>
                     <button class="btn btn-danger btn-sm" @onclick="() => DeleteOrder(order.OrderId)">Delete</button> *@
@@ -126,10 +126,11 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>Total</th>
+                                <th>Sản Phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Giá</th>
+                                <th>Giảm giá</th>
+                                <th>Tổng</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -138,8 +139,19 @@
                                 <tr>
                                     <td>@detail.Product.ProductName</td>
                                     <td>@detail.Quantity</td>
-                                    <td>@detail.UnitPrice</td>
-                                    <td>@(detail.Quantity * detail.UnitPrice)</td>
+                                    <td>@detail.UnitPrice.ToString("N0") VND</td>
+                                    <td>@detail.Discount%</td>
+                                    @{
+                                        var subTotalPrice = detail.UnitPrice * (decimal)detail.Quantity;
+                                        var subTotalPriceFormat = subTotalPrice.ToString("N0");
+                                        var actualSubTotalPrice = detail.UnitPrice * detail.Quantity * ((decimal)(100 - detail.Discount) / 100);
+                                        var actualSubTotalPriceFormat = actualSubTotalPrice.ToString("N0");
+                                    }
+                                    @* <td>@(detail.Quantity * detail.UnitPrice)</td> *@
+                                    <td class="text-center">
+                                        <div style="text-decoration: line-through">@(subTotalPriceFormat) VND</div>
+                                        <div class="text-primary">@(actualSubTotalPriceFormat) VND</div>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -282,7 +294,7 @@
 
     private async Task DeleteOrder(int orderId)
     {
-        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete order {orderId}?");
+        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", $"Bạn có chắc chắn muốn xóa đơn hàng {orderId} không?");
         if (confirm)
         {
             await OrderService.DeleteOrderAsync(orderId);
@@ -309,7 +321,7 @@
         }
         catch (Exception ex)
         {
-            await JSRuntime.InvokeVoidAsync("alert", $"Error loading order details: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", $"Lỗi khi tải chi tiết đơn hàng: {ex.Message}");
         }
 
     }
