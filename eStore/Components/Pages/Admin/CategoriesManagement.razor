@@ -115,9 +115,10 @@
         StateHasChanged();
     }
     // Tìm kiếm danh mục theo tên hoặc mô tả
-    private void SearchCategories()
+    private async void SearchCategories()
     {
-        FilteredCategories = Categories
+        Categories = await CategoryService.GetAllCategoriesAsync();
+        Categories = Categories
         .Where(c => c.CategoryName.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
                     c.CategoryDescription.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
         .ToList();
@@ -180,8 +181,8 @@
         {
             if (isEdit)
             {
-                await CategoryService.UpdateCategoryAsync(SelectedCategory);
-                if (hubConnection?.State == HubConnectionState.Connected)
+                await CategoryService.UpdateCategoryAsync(SelectedCategory);            
+               
                     await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
             }
             else
@@ -193,6 +194,7 @@
                     });
                 if (hubConnection?.State == HubConnectionState.Connected)
                     await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
+                    
             }
             showPopup = false;
         }

@@ -13,10 +13,27 @@
 
 <h3>Orders</h3>
 <!-- Search Filter -->
-<div class="d-flex mb-3">
+@* <div class="d-flex mb-3">
     <input type="date" class="form-control me-2" @bind="StartOrderDate" />
     <input type="date" class="form-control me-2" @bind="EndOrderDate" />
     <button class="btn btn-primary" @onclick="SearchOrders">Search</button>
+</div> *@
+<div class="d-flex mb-3">
+    <div class="me-2">
+        <input type="date" class="form-control" @bind="StartOrderDate" />
+        @if (!string.IsNullOrEmpty(StartDateError))
+        {
+            <small class="text-danger">@StartDateError</small>
+        }
+    </div>
+    <div class="me-2">
+        <input type="date" class="form-control" @bind="EndOrderDate" />
+        @if (!string.IsNullOrEmpty(EndDateError))
+        {
+            <small class="text-danger">@EndDateError</small>
+        }
+    </div>
+    <button class="btn btn-primary" @onclick="SearchOrders">Tìm kiếm</button>
 </div>
 <table class="table table-striped">
     <thead>
@@ -158,9 +175,32 @@
     private int TotalPages => (int)Math.Ceiling((double)Model.Count / PageSize);
     private bool CanGoPrevious => CurrentPage > 1;
     private bool CanGoNext => CurrentPage < TotalPages;
-    private DateTime? StartOrderDate;
-    private DateTime? EndOrderDate;
+    private DateTime? _startOrderDate;
+    private DateTime? _endOrderDate;
+    private string? StartDateError;
+    private string? EndDateError;
     private HubConnection hubConnection;
+
+    private DateTime? StartOrderDate
+    {
+        get => _startOrderDate;
+        set
+        {
+            _startOrderDate = value;
+            ValidateDates();
+        }
+    }
+
+    // Thuộc tính EndOrderDate với setter để gọi ValidateDates
+    private DateTime? EndOrderDate
+    {
+        get => _endOrderDate;
+        set
+        {
+            _endOrderDate = value;
+            ValidateDates();
+        }
+    }
     protected override async Task OnInitializedAsync()
     {
         await LoadOrdersAsync();
@@ -273,10 +313,48 @@
         await LoadOrdersAsync();
         showEditPopup = false;
     }
+    private void ValidateDates()
+    {
+        if (StartOrderDate == null)
+        {
+            StartDateError = "Vui lòng chọn ngày bắt đầu.";
+        }
+        else
+        {
+            StartDateError = "";
+        }
+
+        if (EndOrderDate == null)
+        {
+            EndDateError = "Vui lòng chọn ngày kết thúc.";
+        }
+        else
+        {
+            EndDateError = "";
+        }
+
+        if (StartOrderDate.HasValue && EndOrderDate.HasValue)
+        {
+            if (StartOrderDate > EndOrderDate)
+            {
+                StartDateError = "Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.";
+            }
+            else
+            {
+                StartDateError = ""; 
+            }
+        }
+
+        // Cập nhật giao diện
+        StateHasChanged();
+    }
+
     private async Task SearchOrders()
     {
-        if (StartOrderDate != null && EndOrderDate != null)
+        // Không reset lỗi ở đây, để lỗi hiển thị từ ValidateDates
+        if (string.IsNullOrEmpty(StartDateError) && string.IsNullOrEmpty(EndDateError))
         {
+            // Thực hiện tìm kiếm nếu không có lỗi
             var result = await OrderService.GetAllOrdersAsync();
             Model = result.Where(o => o.OrderDate >= StartOrderDate && o.OrderDate <= EndOrderDate).ToList();
             CurrentPage = 1;
