@@ -1,4 +1,5 @@
-﻿using BusinessObject.Hubs;
+﻿using Blazored.LocalStorage;
+using BusinessObject.Hubs;
 using BusinessObject.Services;
 using CurrieTechnologies.Razor.SweetAlert2;
 using DataAccess.Interfaces;
@@ -62,6 +63,7 @@ services.AddScoped<ICategoryService, CategoryService>();
 
 services.AddQuickGridEntityFrameworkAdapter();
 services.AddBlazorBootstrap();
+services.AddBlazoredLocalStorage();
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddResponseCompression(options =>
 {
