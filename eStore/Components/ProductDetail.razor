@@ -298,17 +298,17 @@
 
     private async Task BuyNow()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (!user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
         if (product != null && quantity <= product.UnitsInStock)
         {
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-
-            if (!user.Identity.IsAuthenticated)
-            {
-                NavigationManager.NavigateTo("/login", forceLoad: true);
-                return;
-            }
-
             var userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             var cart = await CartService.GetCartAsync(userId);

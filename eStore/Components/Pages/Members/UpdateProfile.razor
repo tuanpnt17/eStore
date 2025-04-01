@@ -3,6 +3,7 @@
 @using BusinessObject.Models
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using eStore.Helpers
 @inject NavigationManager NavigationManager
 @inject IMemberService MemberService
 @inject AuthenticationStateProvider AuthStateProvider
@@ -17,10 +18,10 @@
         }
         else
         {
-            <div class="row">
+            <div class="row justify-content-center">
                 <div class="col-md-4">
                     <EditForm Model="Member" OnValidSubmit="UpdateMemeber" Context="editContext" Enhance>
-
+                        <DataAnnotationsValidator />
                         <div class="mb-3">
                             <label for="email" class="form-label">Email:</label>
                             <InputText readonly id="email" @bind-Value="Member.Email" class="form-control" aria-required="true" />
@@ -93,7 +94,18 @@
                     ShowCancelButton = true,
                     ConfirmButtonText = "Ok",
                 });
-
+            if (AuthStateProvider is CustomAuthStateProvider customAuthStateProvider)
+            {
+                await customAuthStateProvider.UpdateAuthenticationState(new UserSession
+                    {
+                        Id = Member.MemberId,
+                        Email = Member.Email,
+                        Role = Member.Role,
+                        City = Member.City,
+                        Country = Member.Country
+                    });
+            }
+                
             if (result.IsConfirmed)
             {
                 NavigationManager.NavigateTo("./Members/Edit");

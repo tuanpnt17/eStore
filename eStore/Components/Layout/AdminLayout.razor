@@ -1,10 +1,31 @@
-﻿@inherits LayoutComponentBase
-
+﻿@using BlazorBootstrap
+@using Microsoft.AspNetCore.Components.Authorization
+@using eStore.Helpers
+@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
 <div class="page">
     <div class="sidebar">
         <AdminMenu />
     </div>
-
+    <div>Hello</div>
+    <Dropdown Color="DropdownColor.Secondary">
+        <DropdownToggleButton>
+            <a>
+                <img src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" alt="User Avatar" class="rounded-circle" width="40" height="40">
+            </a>
+        </DropdownToggleButton>
+        <DropdownMenu Position="DropdownMenuPosition.End">
+            <DropdownItem To="#" Type="DropdownItemType.Link"><span class="dropdown-item-text">Hello,</span></DropdownItem>
+            <DropdownItem To="#" Type="DropdownItemType.Link">
+                <span class="dropdown-item-text">
+                    <a href="./members/edit" style="    color: black;
+    text-decoration: none">Thông tin cá nhân</a>
+                </span>
+            </DropdownItem>
+            <DropdownItem To="#" Type="DropdownItemType.Link"><a class="dropdown-item" href="#" @onclick="Logout">Logout</a></DropdownItem>
+        </DropdownMenu>
+    </Dropdown>
     <main>
         <article class="content px-4">
             @Body
@@ -20,10 +41,12 @@
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">eStore</a>
+        <a class="navbar-brand" href="">EStore</a>
     </div>
+    
 </div>
 
+                
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
@@ -59,3 +82,15 @@
         </div>
     </nav>
 </div>
+
+@code {
+    private async Task Logout()
+	{
+		if (AuthStateProvider is CustomAuthStateProvider customState)
+		{
+			await customState.UpdateAuthenticationState(null);
+		}
+
+		NavigationManager.NavigateTo("/login", forceLoad: true);
+	}
+}

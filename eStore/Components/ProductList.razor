@@ -8,8 +8,7 @@
 @inject NavigationManager NavigationManager
 
 
-<Microsoft.AspNetCore.Components.Authorization.AuthorizeView Roles="Member, Admin">
-    <Authorized>
+
         @if (products == null)
         {
             <p>Đang tải dữ liệu...</p>
@@ -46,8 +45,6 @@
                 </ul>
             </nav>
         }
-    </Authorized>
-</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
 
 
 

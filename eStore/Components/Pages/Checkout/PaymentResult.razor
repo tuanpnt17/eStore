@@ -76,11 +76,11 @@ else if (ErrorMessage != null)
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if (!user.Identity.IsAuthenticated)
-        {
-            NavigationManager.NavigateTo("/login", forceLoad: true);
-            return;
-        }
+        // if (!user.Identity.IsAuthenticated)
+        // {
+        //     NavigationManager.NavigateTo("/login", forceLoad: true);
+        //     return;
+        // }
         var uri = new Uri(NavigationManager.Uri);
         IQueryCollection query = new QueryCollection(QueryHelpers.ParseQuery(uri.Query));
 

@@ -15,7 +15,6 @@
 
 <EditForm Model="@model" OnValidSubmit="HandleLogin" class="container mt-3 p-4 border rounded shadow-sm bg-light">
     <DataAnnotationsValidator />
-    <ValidationSummary class="text-danger" />
 
     <div class="mb-3">
         <label class="form-label">Email:</label>
@@ -45,11 +44,11 @@
 @code {
     public class Model
     {
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
+        [Required(ErrorMessage = "Thiếu email.")]
+        [EmailAddress(ErrorMessage = "Sai định dạng.")]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Password is required.")]
+        [Required(ErrorMessage = "Nhập mật khẩu.")]
         public string Password { get; set; } = string.Empty;
     }
 
@@ -82,6 +81,13 @@
                         City = loginResult.City,
                         Country = loginResult.Country
                     });
+                if (loginResult.Role == "Member")
+                {
+                    Navigation.NavigateTo("/");
+                } else
+                {
+                    Navigation.NavigateTo("/admin");
+                }
                 var cartItemCount = await CartService.GetCartItemsCount(loginResult.MemberId.ToString());
                 if (OnCartUpdated != null && cartItemCount != null)
                 {
