@@ -25,8 +25,8 @@
 }
 
 .bi {
-    display: inline-block;
-    position: relative;
+    display: flex;
+    align-items: center;
     width: 1.25rem;
     height: 1.25rem;
     margin-right: 0.75rem;
@@ -66,7 +66,8 @@
         border-radius: 4px;
         height: 3rem;
         display: flex;
-        align-items: center;
+        align-items: center; /* Ensures vertical alignment */
+        padding-left: 1rem;
         line-height: 3rem;
         width: 100%;
     }

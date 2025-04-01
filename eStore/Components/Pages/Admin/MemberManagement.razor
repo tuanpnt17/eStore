@@ -106,13 +106,6 @@ else
     <p>Không tìm thấy thành viên.</p>
 }
 
-@if (errorMessage != null)
-{
-    <div class="alert alert-danger mt-3">
-        @errorMessage
-    </div>
-}
-
 @if (showCreatePopup)
 {
     <div class="modal fade show d-block" tabindex="-1" role="dialog">
@@ -127,8 +120,6 @@ else
                 <div class="modal-body">
                     <EditForm Model="createMember" OnValidSubmit="HandleCreateSubmit">
                         <DataAnnotationsValidator />
-                        <ValidationSummary />
-
                         <div class="mb-3">
                             <label>Email</label>
                             <input type="email" class="form-control" @bind="createMember.Email" />
@@ -158,6 +149,12 @@ else
                             <button type="submit" class="btn btn-primary">Tạo</button>
                             <button type="button" class="btn btn-secondary" @onclick="() => showCreatePopup = false">Hủy</button>
                         </div>
+                        @if (errorMessage != null)
+                        {
+                            <div class="alert alert-danger mt-3">
+                                @errorMessage
+                            </div>
+                        }
                     </EditForm>
                 </div>
             </div>
@@ -180,11 +177,9 @@ else
                 <div class="modal-body">
                     <EditForm Model="updateMember" OnValidSubmit="HandleUpdateSubmit">
                         <DataAnnotationsValidator />
-                        <ValidationSummary />
-
                         <div class="mb-3">
                             <label>Email</label>
-                            <input type="email" class="form-control" @bind="updateMember.Email" />
+                            <input type="email" class="form-control" @bind="updateMember.Email" disabled />
                             <ValidationMessage For="@(() => updateMember.Email)" />
                         </div>
                         <div class="mb-3">
