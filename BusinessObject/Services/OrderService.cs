@@ -28,6 +28,11 @@ public class OrderService : IOrderService
         return await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
     }
 
+    public async Task<List<Order>> GetOrderByUserIdAsync(int UserId)
+    {
+        return await _unitOfWork.OrderRepository.GetOrderByUserIdAsync(UserId);
+    }
+
     public async Task UpdateOrderAsync(Order order)
     {
         await _unitOfWork.OrderRepository.UpdateOrderAsync(order);

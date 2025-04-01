@@ -41,10 +41,14 @@
                                 </DropdownToggleButton>
                                 <DropdownMenu Position="DropdownMenuPosition.End">
                                     <DropdownItem To="#" Type="DropdownItemType.Link"><span class="dropdown-item-text">Hello, @context.User.Identity.Name</span></DropdownItem>
-                                    <DropdownItem To="#" Type="DropdownItemType.Link">
+                                    <DropdownItem To="/update-profile" Type="DropdownItemType.Link">
                                         <span class="dropdown-item-text">
-                                            <a href="./update-profile" style="    color: black;
-    text-decoration: none">Thông tin cá nhân</a>
+                                            <a href="/update-profile" style="color: black;text-decoration: none">Thông tin cá nhân</a>
+                                        </span>
+                                    </DropdownItem>
+                                    <DropdownItem To="/orders-hitory" Type="DropdownItemType.Link">
+                                        <span class="dropdown-item-text">
+                                            <a href="/orders-hitory" style="color: black;text-decoration: none">Lịch sử đơn hàng</a>
                                         </span>
                                     </DropdownItem>
                                     <DropdownItem To="#" Type="DropdownItemType.Link"><a class="dropdown-item" href="#" @onclick="Logout">Logout</a></DropdownItem>

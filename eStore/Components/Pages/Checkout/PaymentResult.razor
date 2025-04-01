@@ -101,7 +101,7 @@ else if (ErrorMessage != null)
                         // new order from cart
                         var order = new Order()
                             {
-                                MemberId = 1,
+                                MemberId = int.Parse(userId),
                                 Freight = _totalPrice,
                                 OrderDate = VnPayPaymentResult.Timestamp,
                                 RequiredDate = VnPayPaymentResult.Timestamp.AddDays(3),

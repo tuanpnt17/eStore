@@ -8,6 +8,7 @@ public interface IOrderService
     Task DeleteOrderAsync(int orderId);
     Task<Order> GetOrderByIdAsync(int orderId);
     Task UpdateOrderAsync(Order order);
+    Task<List<Order>> GetOrderByUserIdAsync(int UserId);
 
     Task AddOrderAsync(Order order);
 }
