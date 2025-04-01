@@ -41,7 +41,7 @@
         <PropertyColumn Property="product => product.Category.CategoryName" Title="Danh mục" />
         <PropertyColumn Property="product => product.ProductName" Title="Tên sản phẩm" />
         <PropertyColumn Property="product => product.Weight" Title="Trọng lượng" />
-        <PropertyColumn Property="product => product.UnitPrice" Title="Giá" />
+        <PropertyColumn Property="product => product.UnitPrice" Title="Giá (VNĐ)" />
         <PropertyColumn Property="product => product.UnitsInStock" Title="Tồn kho" />
 
         <TemplateColumn Context="product" Align="Align.Left">
@@ -126,8 +126,6 @@ else
                 <div class="modal-body">
                     <EditForm Model="createProduct" OnValidSubmit="HandleCreateSubmit">
                         <DataAnnotationsValidator />
-                        <ValidationSummary />
-
                         <div class="mb-3">
                             <label>Danh mục</label>
                             <select class="form-control" @bind="createProduct.CategoryId">
@@ -138,7 +136,6 @@ else
                                 }
                             </select>
                         </div>
-                        <p>ID Danh mục: @createProduct.CategoryId</p>
                         <div class="mb-3">
                             <label>Tên sản phẩm</label>
                             <input type="text" class="form-control" @bind="createProduct.ProductName" />
@@ -152,7 +149,7 @@ else
                         </div>
 
                         <div class="mb-3">
-                            <label>Giá</label>
+                            <label>Giá (VNĐ)</label>
                             <input type="number" class="form-control" @bind="createProduct.UnitPrice" />
                             <ValidationMessage For="@(() => createProduct.UnitPrice)" />
                         </div>
@@ -188,8 +185,6 @@ else
                 <div class="modal-body">
                     <EditForm Model="updateProduct" OnValidSubmit="HandleUpdateSubmit">
                         <DataAnnotationsValidator />
-                        <ValidationSummary />
-
                         <div class="mb-3">
                             <label>Danh mục</label>
                             <select class="form-control" @bind="updateProduct.CategoryId">
@@ -214,7 +209,7 @@ else
                         </div>
 
                         <div class="mb-3">
-                            <label>Giá</label>
+                            <label>Giá (VNĐ)</label>
                             <input type="number" class="form-control" @bind="updateProduct.UnitPrice" />
                             <ValidationMessage For="@(() => updateProduct.UnitPrice)" />
                         </div>
@@ -263,8 +258,8 @@ else
                             <td>@detailProduct.Weight</td>
                         </tr>
                         <tr>
-                            <th>Giá</th>
-                            <td>@detailProduct.UnitPrice.ToString("C")</td>
+                            <th>Giá (VNĐ)</th>
+                            <td>@detailProduct.UnitPrice</td>
                         </tr>
                         <tr>
                             <th>Tồn kho</th>
@@ -306,8 +301,8 @@ else
                             <td>@deleteProduct.Weight</td>
                         </tr>
                         <tr>
-                            <th>Giá</th>
-                            <td>@deleteProduct.UnitPrice.ToString("C")</td>
+                            <th>Giá (VNĐ)</th>
+                            <td>@deleteProduct.UnitPrice</td>
                         </tr>
                         <tr>
                             <th>Tồn kho</th>

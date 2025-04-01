@@ -40,7 +40,8 @@ public class ProductRepository : IProductRepository
         query = query.Include(p => p.Category).AsNoTracking();
         int count = await query.CountAsync();
         IReadOnlyCollection<Product> items = await query
-            .Skip((index - 1) * pageSize)
+		    .OrderByDescending(p => p.ProductId)
+			.Skip((index - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
         return new PaginatedList<Product>(items, count, index, pageSize);
@@ -74,9 +75,10 @@ public class ProductRepository : IProductRepository
         int count = query.Where(filter).Count();
         IReadOnlyCollection<Product> items = await query
             .Where(filter)
-            .Skip((index - 1) * pageSize)
+			.OrderByDescending(p => p.ProductId)
+			.Skip((index - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync();
+			.ToListAsync();
         return new PaginatedList<Product>(items, count, index, pageSize);
     }
 }

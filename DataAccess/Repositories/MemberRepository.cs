@@ -37,7 +37,8 @@ public class MemberRepository : IMemberRepository
         query = query.AsNoTracking();
         int count = await query.CountAsync();
         IReadOnlyCollection<Member> items = await query
-            .Skip((index - 1) * pageSize)
+			.OrderByDescending(m => m.MemberId)
+			.Skip((index - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
         return new PaginatedList<Member>(items, count, index, pageSize);
@@ -71,7 +72,8 @@ public class MemberRepository : IMemberRepository
         int count = query.Where(filter).Count();
         IReadOnlyCollection<Member> items = await query
             .Where(filter)
-            .Skip((index - 1) * pageSize)
+			.OrderByDescending(m => m.MemberId)
+			.Skip((index - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
         return new PaginatedList<Member>(items, count, index, pageSize);

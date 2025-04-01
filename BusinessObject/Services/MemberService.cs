@@ -44,7 +44,11 @@ public class MemberService : IMemberService
 
     public async Task AddMemberAsync(CreateMemberDTO memberDto)
     {
-        var member = _mapper.Map<Member>(memberDto);
+		if (_unitOfWork.MemberRepository.CheckExistingEmail(memberDto.Email))
+		{
+			throw new Exception("Email đã tồn tại");
+		}
+		var member = _mapper.Map<Member>(memberDto);
         await _unitOfWork.MemberRepository.InsertAsync(member);
         await _unitOfWork.Complete();
     }

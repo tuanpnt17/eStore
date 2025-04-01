@@ -45,6 +45,7 @@ services.AddHttpContextAccessor();
 services.AddHttpClient();
 
 services.AddAutoMapper(typeof(AppDomain));
+services.AddAutoMapper(typeof(MappingProfile));
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 services.AddScoped<IProductRepository, ProductRepository>();
 services.AddScoped<IOrderRepository, OrderRepository>();
