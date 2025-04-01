@@ -17,10 +17,10 @@
         }
         else
         {
-            <div class="row">
+            <div class="row justify-content-center">
                 <div class="col-md-4">
                     <EditForm Model="Member" OnValidSubmit="UpdateMemeber" Context="editContext" Enhance>
-
+                        <DataAnnotationsValidator />
                         <div class="mb-3">
                             <label for="email" class="form-label">Email:</label>
                             <InputText readonly id="email" @bind-Value="Member.Email" class="form-control" aria-required="true" />

@@ -40,7 +40,12 @@
 								</DropdownToggleButton>
 								<DropdownMenu Position="DropdownMenuPosition.End">
 									<DropdownItem To="#" Type="DropdownItemType.Link"><span class="dropdown-item-text">Hello, @context.User.Identity.Name</span></DropdownItem>
-									<DropdownItem To="#" Type="DropdownItemType.Link"><span class="dropdown-item-text">Update Profile</span></DropdownItem>
+									<DropdownItem To="#" Type="DropdownItemType.Link">
+										<span class="dropdown-item-text">
+											<a href="./members/edit" style="    color: black;
+    text-decoration: none">Thông tin cá nhân</a>
+										</span>
+									</DropdownItem>
 									<DropdownItem To="#" Type="DropdownItemType.Link"><a class="dropdown-item" href="#" @onclick="Logout">Logout</a></DropdownItem>
 								</DropdownMenu>
 							</Dropdown>

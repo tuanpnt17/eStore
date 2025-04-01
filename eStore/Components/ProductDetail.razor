@@ -1,6 +1,7 @@
 ﻿@page "/detail/{ProductId:int}"
 @using BusinessObject.Contracts
 @using BusinessObject.Models
+@using Microsoft.AspNetCore.Components.Authorization
 @using static BusinessObject.Models.ProductDTO
 
 @inject IProductService ProductService
@@ -9,6 +10,7 @@
 @inject IMapper Mapper
 @inject SweetAlertService Swal;
 @layout CommonLayout
+@inject AuthenticationStateProvider AuthStateProvider
 
 @rendermode InteractiveServer
 
@@ -121,60 +123,60 @@
 
 <style>
     .quantity-control {
-        display: flex;
-        align-items: center;
-        max-width: 180px;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    max-width: 180px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .quantity-btn {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f8f9fa;
-        border: none;
-        font-size: 1.5rem;
-        transition: all 0.2s ease;
-        padding: 0;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    border: none;
+    font-size: 1.5rem;
+    transition: all 0.2s ease;
+    padding: 0;
     }
 
-        .quantity-btn:hover {
-            background-color: #e9ecef;
-        }
+    .quantity-btn:hover {
+    background-color: #e9ecef;
+    }
 
     .quantity-input {
-        width: 80px;
-        height: 50px;
-        border: none;
-        border-left: 1px solid #dee2e6;
-        border-right: 1px solid #dee2e6;
-        border-radius: 0;
-        font-size: 1.25rem;
-        font-weight: bold;
-        padding-left: 1px;
-        padding-right: 1px;
+    width: 80px;
+    height: 50px;
+    border: none;
+    border-left: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    border-radius: 0;
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding-left: 1px;
+    padding-right: 1px;
     }
 
-        .quantity-input:focus {
-            box-shadow: none;
-            outline: none;
-        }
+    .quantity-input:focus {
+    box-shadow: none;
+    outline: none;
+    }
 
 
-        .quantity-input::-webkit-outer-spin-button,
-        .quantity-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+    .quantity-input::-webkit-outer-spin-button,
+    .quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    }
 
-        .quantity-input[type=number] {
-            -moz-appearance: textfield;
-        }
+    .quantity-input[type=number] {
+    -moz-appearance: textfield;
+    }
 
     }
 </style>
@@ -217,7 +219,14 @@
 
     private async Task AddToCart()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
+        if (!user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+            return;
+        }
         if (product != null && quantity <= product.UnitsInStock)
         {
             var cart = await CartService.GetCartAsync("1"); // Get cart by user id
@@ -285,6 +294,14 @@
 
     private async Task BuyNow()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (!user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+
         if (product != null && quantity <= product.UnitsInStock)
         {
             // Logic add to cart cho Tuấn
