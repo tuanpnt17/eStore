@@ -8,4 +8,5 @@ public interface ICategoryRepository
     Task CreateCategoryAsync(Category model);
     Task UpdateCategoryAsync(Category model);
     Task DeleteCategoryAsync(int Id);
+    Task<bool> IsCategoryInUseAsync(int categoryId);
 }

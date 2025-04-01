@@ -1,12 +1,15 @@
 ﻿@page "/admin/categoriesmanagement"
 @using BusinessObject.Models
-@layout AdminLayout 
+@using eStore.Hubs
+@using Microsoft.AspNetCore.SignalR
+@using Microsoft.AspNetCore.SignalR.Client
+@layout MainLayout 
 @inject NavigationManager Navigation
 @inject ICategoryService CategoryService
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 @inherits LayoutComponentBase
-
+@inject IHubContext<CategoryHub> CategoryHubContext
 <h3>Categories Manager</h3>
 <div class="mb-3 d-flex">
     <input type="text" class="form-control me-2" placeholder="Search by Name or Description..." @bind="SearchTerm" />
@@ -25,7 +28,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var category in PagedCategories)
+        @foreach (var category in Categories)
         {
             <tr>
                 <td>@category.CategoryId</td>
@@ -80,17 +83,36 @@
     private int CurrentPage = 1;
     private int PageSize = 3; 
     private int TotalPages => (int)Math.Ceiling((double)FilteredCategories.Count / PageSize); 
+    private HubConnection hubConnection;
     protected override async Task OnInitializedAsync()
     {
         await LoadCategoriesAsync();
-        UpdatePagedCategories();
+        try
+        {
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri(CategoryHub.HubUrl))
+                .WithAutomaticReconnect()
+                .Build();
+            hubConnection.On("ReceiveCategoryUpdate", async () =>
+            {
+                await InvokeAsync(async () => await LoadCategoriesAsync());             
+            });
+
+            await hubConnection.StartAsync();
+            Console.WriteLine("SignalR connected successfully!");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("console.error", $"SignalR connection failed: {ex.Message}");
+        }
     }
 
     private async Task LoadCategoriesAsync()
     {
+
         Categories = await CategoryService.GetAllCategoriesAsync();
-        UpdatePagedCategories();
         SearchCategories();
+        StateHasChanged();
     }
     // Tìm kiếm danh mục theo tên hoặc mô tả
     private void SearchCategories()
@@ -135,6 +157,7 @@
     }
     private void EditCategory(Category category)
     {
+        if (category == null) return;
         SelectedCategory = category;
         isEdit = true;
         showPopup = true;
@@ -147,29 +170,61 @@
 
     private async Task SaveCategory()
     {
-        if (isEdit)
+        if (SelectedCategory == null || string.IsNullOrWhiteSpace(SelectedCategory.CategoryName))
         {
-            await CategoryService.UpdateCategoryAsync(SelectedCategory);
+            await JSRuntime.InvokeVoidAsync("alert", "Category Name is required.");
+            return;
         }
-        else
+
+        try
         {
-            await CategoryService.CreateCategoryAsync(new CategoryDTO
-                {
-                    CategoryName = SelectedCategory.CategoryName,
-                    CategoryDescription = SelectedCategory.CategoryDescription
-                });
+            if (isEdit)
+            {
+                await CategoryService.UpdateCategoryAsync(SelectedCategory);
+                if (hubConnection?.State == HubConnectionState.Connected)
+                    await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
+            }
+            else
+            {
+                await CategoryService.CreateCategoryAsync(new CategoryDTO
+                    {
+                        CategoryName = SelectedCategory.CategoryName,
+                        CategoryDescription = SelectedCategory.CategoryDescription ?? ""
+                    });
+                if (hubConnection?.State == HubConnectionState.Connected)
+                    await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
+            }
+            showPopup = false;
         }
-        await LoadCategoriesAsync();
-        showPopup = false;
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Failed to save category: {ex.Message}");
+        }
     }
 
     private async Task DeleteCategory(int categoryId)
     {
         var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this category?");
-        if (confirm)
+        if (!confirm) return;
+
+        try
         {
+            // Check if the category is in use by products
+            var productsInCategory = await CategoryService.IsCategoryInUseAsync(categoryId); // Assumed method
+            if (productsInCategory)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Cannot delete this category because it is associated with one or more products.");
+                return;
+            }
+
+            // Proceed with deletion
             await CategoryService.DeleteCategoryAsync(categoryId);
-            await LoadCategoriesAsync();
+
+                await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Failed to delete category: {ex.Message}");
         }
     }
 }

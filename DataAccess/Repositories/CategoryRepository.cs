@@ -29,4 +29,9 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
         context.Categories.Update(model);
         await context.SaveChangesAsync();
     }
+    public async Task<bool> IsCategoryInUseAsync(int categoryId)
+    {
+        // Check if any product references this category
+        return await context.Products.AnyAsync(p => p.CategoryId == categoryId);
+    }
 }

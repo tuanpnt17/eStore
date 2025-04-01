@@ -3,6 +3,7 @@ using BusinessObject.Models;
 using DataAccess.Data;
 using DataAccess.Entities;
 using DataAccess.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessObject.Services;
 
@@ -37,5 +38,10 @@ public class CategoryService : ICategoryService
     public async Task UpdateCategoryAsync(Category model)
     {
        await _unitOfWork.CategoryRepository.UpdateCategoryAsync(model);
+    }
+    public async Task<bool> IsCategoryInUseAsync(int categoryId)
+    {
+        // Check if any product references this category
+        return await _unitOfWork.CategoryRepository.IsCategoryInUseAsync(categoryId);
     }
 }

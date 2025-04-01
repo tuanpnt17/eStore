@@ -9,4 +9,5 @@ public interface ICategoryService
     Task DeleteCategoryAsync(int cateId);
     Task CreateCategoryAsync(CategoryDTO category);
     Task UpdateCategoryAsync(Category model);
+    Task<bool> IsCategoryInUseAsync(int categoryId);
 }

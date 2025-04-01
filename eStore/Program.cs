@@ -1,9 +1,8 @@
-using BusinessObject.Hubs;
 using BusinessObject.Services;
 using DataAccess.Interfaces;
 using DataAccess.Repositories;
 using eStore.Components;
-using eStore.Helpers;
+using eStore.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +54,7 @@ app.UseAntiforgery();
 app.MapHub<OrderHub>(OrderHub.HubUrl);
 app.MapHub<ProductHub>("/producthub");
 app.MapHub<MemberHub>("/memberhub");
+app.MapHub<CategoryHub>(CategoryHub.HubUrl);
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 using var scope = app.Services.CreateScope();
