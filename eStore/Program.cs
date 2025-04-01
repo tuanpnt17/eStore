@@ -1,15 +1,9 @@
-using Blazored.LocalStorage;
-using BusinessObject.Contracts;
-using BusinessObject.Services;
+﻿using BusinessObject.Services;
+using CurrieTechnologies.Razor.SweetAlert2;
 using DataAccess.Interfaces;
 using DataAccess.Repositories;
 using eStore.Components;
-using eStore.Helpers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +15,26 @@ services.AddRazorComponents().AddInteractiveServerComponents();
 services.AddDbContextFactory<AppDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
 );
-services.AddAuthenticationCore();
+
+services.AddSingleton<IConnectionMultiplexer>(opts =>
+{
+    var options = new ConfigurationOptions
+    {
+        EndPoints = { configuration["Redis:Server"]! },
+        User = configuration["Redis:User"],
+        Password = configuration["Redis:Password"],
+        Ssl = true,
+        AbortOnConnectFail = false,
+        ConnectRetry = 3,
+        ConnectTimeout = 10000,
+        KeepAlive = 30,
+        SyncTimeout = 10000,
+    };
+    return ConnectionMultiplexer.Connect(options);
+});
+
+services.AddSweetAlert2();
+
 services.AddAutoMapper(typeof(AppDomain));
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 services.AddScoped<IProductRepository, ProductRepository>();
@@ -30,38 +43,8 @@ services.AddScoped<ICategoryRepository, CategoryRepository>();
 services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 services.AddScoped<IMemberRepository, MemberRepository>();
 services.AddScoped<IProductService, ProductService>();
-services.AddScoped<IMemberService, MemberService>();
-services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
-services.AddScoped<IJWTService, JWTService>();
+services.AddScoped<ICartService, CartService>();
 
-// Configure JWT authentication
-//var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]);
-//services.AddAuthentication(options =>
-//{
-//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//})
-//.AddJwtBearer(options =>
-//{
-//    options.TokenValidationParameters = new TokenValidationParameters
-//    {
-//        ValidateIssuer = true,
-//        ValidateAudience = true,
-//        ValidateLifetime = true,
-//        ValidateIssuerSigningKey = true,
-//        ValidIssuer = configuration["Jwt:Issuer"],
-//        ValidAudience = configuration["Jwt:Audience"],
-//        IssuerSigningKey = new SymmetricSecurityKey(key)
-//    };
-//});
-
-//services.AddAuthorizationCore(options =>
-//{
-//    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-//});
-//services.AddHttpClient();
-//services.AddBlazoredLocalStorage();
-services.AddScoped<ProtectedSessionStorage>();
 services.AddQuickGridEntityFrameworkAdapter();
 
 services.AddDatabaseDeveloperPageExceptionFilter();
@@ -80,9 +63,6 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-
-app.UseAuthentication(); // Add this line
-app.UseAuthorization();  // Add this line
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
