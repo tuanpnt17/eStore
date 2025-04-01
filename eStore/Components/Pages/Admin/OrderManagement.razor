@@ -1,0 +1,291 @@
+﻿@page "/admin/ordermanagement"
+@layout AdminLayout
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@inject IOrderService OrderService
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+@inherits LayoutComponentBase
+@* @inject HubConnection Connection *@
+
+<h3>Orders</h3>
+<!-- Search Filter -->
+<div class="d-flex mb-3">
+    <input type="date" class="form-control me-2" @bind="StartOrderDate" />
+    <input type="date" class="form-control me-2" @bind="EndOrderDate" />
+    <button class="btn btn-primary" @onclick="SearchOrders">Search</button>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Member ID</th>
+            <th>Order Date</th>
+            <th>Required Date</th>
+            <th>Shipped Date</th>
+            <th>Freight</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in PagedOrders)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.MemberId</td>
+                <td>@order.OrderDate.ToShortDateString()</td>
+                <td>@order.RequiredDate?.ToShortDateString()</td>
+                <td>@order.ShippedDate?.ToShortDateString()</td>
+                <td>@order.Freight</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" @onclick="() => EditOrder(order)">Edit</button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteOrder(order.OrderId)">Delete</button>
+                    <button class="btn btn-info btn-sm" @onclick="() => ViewOrderDetails(order.OrderId)">View Details</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (showEditPopup && SelectedOrder != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Order (Order ID: @SelectedOrder.OrderId)</h5>
+                    <button type="button" class="btn-close" @onclick="CloseEditPopup"></button>
+                </div>
+                <div class="modal-body">
+                    <label>Member ID:</label>
+                    <input type="text" class="form-control" @bind="SelectedOrder.MemberId" />
+                    <label>Order Date:</label>
+                    <input type="date" class="form-control" @bind="SelectedOrder.OrderDate" />
+                    <label>Required Date:</label>
+                    <input type="date" class="form-control" @bind="SelectedOrder.RequiredDate" />
+                    <label>Shipped Date:</label>
+                    <input type="date" class="form-control" @bind="SelectedOrder.ShippedDate" />
+                    <label>Freight:</label>
+                    <input type="number" class="form-control" @bind="SelectedOrder.Freight" />
+                    <h5 class="mt-3">Order Details</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detail in SelectedOrder.OrderDetails)
+                            {
+                                <tr>
+                                    <td>@detail.Product.ProductName</td>
+                                    <td><input type="number" class="form-control" @bind="detail.Quantity" /></td>
+                                    <td><input type="number" step="0.01" class="form-control" @bind="detail.UnitPrice" /></td>
+                                    <td>@(detail.Quantity * detail.UnitPrice)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseEditPopup">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveOrderChanges">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+@if (showDetails && SelectedOrderDetails != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Order Details (Order ID: @SelectedOrderId)</h5>
+                    <button type="button" class="btn-close" @onclick="ClosePopup"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detail in SelectedOrderDetails)
+                            {
+                                <tr>
+                                    <td>@detail.Product.ProductName</td>
+                                    <td>@detail.Quantity</td>
+                                    <td>@detail.UnitPrice</td>
+                                    <td>@(detail.Quantity * detail.UnitPrice)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+<!-- Pagination -->
+<div class="d-flex">
+    <button class="btn btn-secondary" @onclick="PreviousPage" disabled="@(!CanGoPrevious)">Previous</button>
+    <span>Page @CurrentPage of @TotalPages</span>
+    <button class="btn btn-secondary" @onclick="NextPage" disabled="@(!CanGoNext)">Next</button>
+</div>
+<button class="btn btn-primary" @onclick="UpdateOrderList">Update Orders</button>
+@code {
+    private List<Order> Model = new List<Order>();
+    private List<OrderDetail> SelectedOrderDetails = new List<OrderDetail>();
+    private List<Order> PagedOrders = new List<Order>();
+    private Order SelectedOrder;
+    private bool showEditPopup = false;
+    private bool showDetails = false;
+    private int SelectedOrderId;
+    private int CurrentPage = 1;
+    private int PageSize = 2;
+    private int TotalPages => (int)Math.Ceiling((double)Model.Count / PageSize);
+    private bool CanGoPrevious => CurrentPage > 1;
+    private bool CanGoNext => CurrentPage < TotalPages;
+    private DateTime? StartOrderDate;
+    private DateTime? EndOrderDate;
+    private HubConnection hubConnection;
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOrdersAsync();
+        UpdatePagedOrders();
+        try
+        {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri(OrderHub.HubUrl))
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On("ReceiveOrderDelete", async () =>
+        {
+            // Khi nhận được thông báo sản phẩm mới được thêm, gọi lại API để cập nhật danh sách
+            Model = await OrderService.GetAllOrdersAsync();
+            StateHasChanged(); // Báo cho Blazor biết UI cần được cập nhật
+        });
+
+        await hubConnection.StartAsync();
+            Console.WriteLine("SignalR connected successfully!");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("console.error", $"SignalR connection failed: {ex.Message}");
+        }
+    }
+    private async Task UpdateOrderList()
+    {
+        await hubConnection.SendAsync("NotifyOrderUpdated"); // Gửi sự kiện đến tất cả client
+    }
+    private async Task LoadOrdersAsync()
+    {
+        Model = await OrderService.GetAllOrdersAsync();
+        UpdatePagedOrders();
+    }
+    private void UpdatePagedOrders()
+    {
+        PagedOrders = Model.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+    }
+
+    private void NextPage()
+    {
+        if (CanGoNext)
+        {
+            CurrentPage++;
+            UpdatePagedOrders();
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (CanGoPrevious)
+        {
+            CurrentPage--;
+            UpdatePagedOrders();
+        }
+    }
+
+    private async Task DeleteOrder(int orderId)
+    {
+        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete order {orderId}?");
+        if (confirm)
+        {
+            await OrderService.DeleteOrderAsync(orderId);
+            await LoadOrdersAsync();
+        }
+    }
+    private async Task ViewOrderDetails(int orderId)
+    {
+        try
+        {
+            SelectedOrderId = orderId;
+            var order = await OrderService.GetOrderByIdAsync(orderId);
+
+            if (order != null && order.OrderDetails != null)
+            {
+                SelectedOrderDetails = order.OrderDetails.ToList();
+                showDetails = true;
+            }
+            else
+            {
+                showDetails = true;
+                SelectedOrderDetails = new List<OrderDetail>(); // No details found
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Error loading order details: {ex.Message}");
+        }
+
+    }
+    private void ClosePopup()
+    {
+        showDetails = false;
+    }
+    private void EditOrder(Order order)
+    {
+        SelectedOrder = order;
+        showEditPopup = true;
+    }
+
+    private void CloseEditPopup()
+    {
+        showEditPopup = false;
+    }
+
+    private async Task SaveOrderChanges()
+    {
+        await OrderService.UpdateOrderAsync(SelectedOrder);
+        await hubConnection.SendAsync("OrderUpdated", SelectedOrder.OrderId);
+        await LoadOrdersAsync();
+        showEditPopup = false;
+    }
+    private async Task SearchOrders()
+    {
+        if (StartOrderDate != null && EndOrderDate != null)
+        {
+            var result = await OrderService.GetAllOrdersAsync();
+            Model = result.Where(o => o.OrderDate >= StartOrderDate && o.OrderDate <= EndOrderDate).ToList();
+            CurrentPage = 1;
+            UpdatePagedOrders();
+        }
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

@@ -1,0 +1,77 @@
+﻿@page "/admin"
+@using BusinessObject.Models
+@layout AdminLayout
+@inject IOrderService OrderService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<h3>Admin Dashboard</h3>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Total Orders</div>
+                <div class="card-body">
+                    <h4 class="card-title">@TotalOrders</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Freight</div>
+                <div class="card-body">
+                    <h4 class="card-title">$@TotalFreight</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ Order theo ngày -->
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Orders Per Day</div>
+                <div class="card-body">
+                    <canvas id="orderChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/site.js"></script>
+
+@code {
+    private int TotalOrders;
+    private decimal? TotalFreight;
+    private List<OrderDataDTO> OrdersByDate = new();
+    private bool IsDataLoaded = false; // Đánh dấu khi dữ liệu đã load xong
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("Fetching orders...");
+        var orders = await OrderService.GetAllOrdersAsync();
+
+        TotalOrders = orders.Count;
+        TotalFreight = orders.Sum(o => o.Freight);
+        OrdersByDate = orders
+            .GroupBy(o => o.OrderDate.Date)
+            .Select(g => new OrderDataDTO { Date = g.Key.ToString("yyyy-MM-dd"), OrderCount = g.Count() })
+            .OrderBy(o => o.Date)
+            .ToList();
+
+        IsDataLoaded = true; // Dữ liệu đã load xong
+        StateHasChanged(); // Bắt buộc UI render lại
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && IsDataLoaded)
+        {
+            Console.WriteLine("Calling drawOrderChart...");
+            await JSRuntime.InvokeVoidAsync("drawOrderChart", OrdersByDate);
+        }
+    }
+}

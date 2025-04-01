@@ -1,0 +1,28 @@
+﻿@inherits LayoutComponentBase
+
+<div class="d-flex flex-column flex-lg-row">
+    <!-- Sidebar -->
+    <div class="bg-gradient bg-primary text-white p-3" style="min-width: 250px; height: 100vh;">
+        <h3 class="text-light">eStore</h3>
+        <hr class="border-light">
+
+        <nav class="nav flex-column">
+            <NavLink class="nav-link text-white" href="/admin/ordermanagement" Match="NavLinkMatch.All">
+                <i class="bi bi-box-seam me-2"></i> Orders
+            </NavLink>
+            <NavLink class="nav-link text-white" href="/admin/categoriesmanagement">
+                <i class="bi bi-folder-fill me-2"></i> Categories
+            </NavLink>
+            <NavLink class="nav-link text-white" href="/admin/reports">
+                <i class="bi bi-bar-chart-fill me-2"></i> Reports
+            </NavLink>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-fill">
+        <main class="p-4 bg-light min-vh-100">
+            @Body
+        </main>
+    </div>
+</div>

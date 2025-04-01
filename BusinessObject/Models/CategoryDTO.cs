@@ -1,3 +1,10 @@
-﻿namespace BusinessObject.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class CategoryDTO { }
+namespace BusinessObject.Models;
+
+public class CategoryDTO 
+{
+    public required string CategoryName { get; set; } = string.Empty;
+    public string? CategoryDescription { get; set; }
+    public CategoryDTO() { }
+}

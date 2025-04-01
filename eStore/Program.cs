@@ -2,7 +2,10 @@ using BusinessObject.Contracts;
 using BusinessObject.Services;
 using DataAccess.Interfaces;
 using DataAccess.Repositories;
+using eStore;
 using eStore.Components;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.SignalR.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,12 +25,19 @@ services.AddScoped<ICategoryRepository, CategoryRepository>();
 services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 services.AddScoped<IMemberRepository, MemberRepository>();
 services.AddScoped<IProductService, ProductService>();
+services.AddScoped<IOrderService, OrderService>();
+services.AddScoped<ICategoryService, CategoryService>();
+
 
 services.AddQuickGridEntityFrameworkAdapter();
 
 services.AddDatabaseDeveloperPageExceptionFilter();
+services.AddSignalR();
+services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true; // Enable compression for HTTPS requests
+});
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -37,11 +47,18 @@ if (!app.Environment.IsDevelopment())
     app.UseMigrationsEndPoint();
 }
 
+
 app.UseHttpsRedirection();
-
+app.UseResponseCompression();
 app.UseStaticFiles();
+app.UseRouting();
 app.UseAntiforgery();
-
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapBlazorHub(); // Required for Blazor Server
+    endpoints.MapHub<OrderHub>("/orderHub"); // SignalR Hub
+    //endpoints.MapFallbackToPage("/admin");
+});
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 using var scope = app.Services.CreateScope();

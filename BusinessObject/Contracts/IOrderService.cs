@@ -1,3 +1,13 @@
-﻿namespace BusinessObject.Contracts;
+﻿using BusinessObject.Models;
+using DataAccess.Entities;
 
-public interface IOrderService { }
+namespace BusinessObject.Contracts;
+
+public interface IOrderService 
+{
+    Task<List<Order>> GetAllOrdersAsync();
+    Task DeleteOrderAsync(int orderId);
+    Task<Order> GetOrderByIdAsync(int orderId);
+    Task UpdateOrderAsync(Order order);
+
+}

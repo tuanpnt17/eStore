@@ -1,3 +1,9 @@
-﻿namespace DataAccess.Interfaces;
+﻿using DataAccess.Entities;
 
-public interface IOrderDetailRepository { }
+namespace DataAccess.Interfaces;
+
+public interface IOrderDetailRepository 
+{
+    Task<List<OrderDetail>> GetOrderDetailByOrderIdAsync(int Id);
+
+}
