@@ -45,11 +45,6 @@ public class MemberService : IMemberService
 		var member = await GetMemberByIdAsync(memberDto.MemberId)
 			?? throw new Exception($"Thành viên với ID {memberDto.MemberId} không tồn tại.");
 
-		if (member.Orders != null && member.Orders.Any())
-		{
-			throw new InvalidOperationException($"Không thể cập nhật thành viên với ID {memberDto.MemberId} vì đã có đơn hàng liên quan.");
-		}
-
 		_mapper.Map(memberDto, member);
 		await _unitOfWork.MemberRepository.UpdateAsync(member);
 		await _unitOfWork.Complete();

@@ -46,10 +46,6 @@ public class ProductService : IProductService
 	public async Task UpdateProductAsync(UpdateProductDTO productDto)
 	{
 		var product = await GetProductByIdAsync(productDto.ProductId) ?? throw new Exception($"Product with ID {productDto.ProductId} does not exist.");
-		if (product.OrderDetails != null && product.OrderDetails.Any())
-		{
-			throw new InvalidOperationException($"Không thể cập nhật sản phẩm với ID {productDto.ProductId} vì nó đã có chi tiết đơn hàng liên quan.");
-		}
 		_mapper.Map(productDto,product);
 		await _unitOfWork.ProductRepository.UpdateAsync(product);
 		await _unitOfWork.Complete();

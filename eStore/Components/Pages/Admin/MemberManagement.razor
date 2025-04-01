@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @using Microsoft.AspNetCore.SignalR
 @using BusinessObject.Hubs
+@layout MainLayout
 @inject IHubContext<MemberHub> HubContext
 @inject IMemberService MemberService
 @inject IMapper Mapper
@@ -498,7 +499,7 @@ else
         if (existingMember != null)
         {
             updateMember = Mapper.Map<UpdateMemberDTO>(existingMember);
-            updateMember.MemberId = id; // Ensure ID is set
+            updateMember.MemberId = id; 
         }
         showUpdatePopup = true;
     }
@@ -518,7 +519,7 @@ else
         }
         catch (InvalidOperationException ex)
         {
-            errorMessage = ex.Message; // "Cannot update member because it has related orders."
+            errorMessage = ex.Message; 
         }
         catch (Exception ex)
         {
