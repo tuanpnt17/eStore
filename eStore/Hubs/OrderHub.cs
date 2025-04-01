@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace BusinessObject.Hubs
+namespace eStore.Hubs
 {
     public class OrderHub : Hub
     {
