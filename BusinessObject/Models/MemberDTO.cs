@@ -2,20 +2,22 @@
 
 namespace BusinessObject.Models;
 
-public class MemberDTO 
+public class MemberDTO
 {
     public int MemberId { get; set; }
-    public required string Email { get; set; }
+    [EmailAddress, Required]
+    public string Email { get; set; }
 
     [Required, StringLength(40)]
-    public required string CompanyName { get; set; }
+    public string CompanyName { get; set; }
 
     [Required, StringLength(15)]
-    public required string City { get; set; }
+    public string City { get; set; }
 
     [Required, StringLength(15)]
-    public required string Country { get; set; }
+    public string Country { get; set; }
 
     [Required, StringLength(30)]
-    public required string Password { get; set; }
+    public string Password { get; set; }
+    public string Role { get; set; }
 }

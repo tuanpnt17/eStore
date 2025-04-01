@@ -1,53 +1,92 @@
-﻿@inherits LayoutComponentBase
+﻿@using BlazorBootstrap
+@using Microsoft.AspNetCore.Components.Authorization
+@using eStore.Helpers
+@inherits LayoutComponentBase
 @inject ICartService CartService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
 
 <div class="page" style="width: 1280px; margin: 0 auto">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light px-3">
-        <a class="navbar-brand" href="#">
-            <img src="https://static.vecteezy.com/system/resources/previews/022/257/158/original/store-logo-design-illustration-vector.jpg" alt="App Logo" height="40">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item me-3">
-                    <a class="nav-link position-relative" href="/cart">
-                        <i class="bi bi-cart" style="font-size: 1.5rem;"></i>
-                        <span class="position-absolute top-20 start-100 translate-middle badge rounded-pill bg-danger">
-                            @_cartItemCount
-                        </span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <img src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" alt="User Avatar" class="rounded-circle" width="40" height="40">
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>    
-    <main>
-        <article class="content px-4">
-            <CascadingValue Value="OnCartUpdated">
-                @Body
-            </CascadingValue>
-        </article>
-    </main>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light px-3">
+		<a class="navbar-brand" href="#">
+			<img src="https://static.vecteezy.com/system/resources/previews/022/257/158/original/store-logo-design-illustration-vector.jpg" alt="App Logo" height="40">
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+			<ul class="navbar-nav">
+				<li class="nav-item me-3">
+					<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+						<Authorized>
+							<a class="nav-link position-relative" href="/cart">
+								<i class="bi bi-cart" style="font-size: 1.5rem;"></i>
+								<span class="position-absolute top-20 start-100 translate-middle badge rounded-pill bg-danger">
+									@_cartItemCount
+								</span>
+							</a>
+						</Authorized>
+					</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+				</li>
+				<li class="nav-item">
+					<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+						<Authorized>
+							<Dropdown Color="DropdownColor.Secondary">
+								<DropdownToggleButton>
+									<a>
+										<img src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" alt="User Avatar" class="rounded-circle" width="40" height="40">
+									</a>
+								</DropdownToggleButton>
+								<DropdownMenu Position="DropdownMenuPosition.End">
+									<DropdownItem To="#" Type="DropdownItemType.Link"><span class="dropdown-item-text">Hello, @context.User.Identity.Name</span></DropdownItem>
+									<DropdownItem To="#" Type="DropdownItemType.Link"><span class="dropdown-item-text">Update Profile</span></DropdownItem>
+									<DropdownItem To="#" Type="DropdownItemType.Link"><a class="dropdown-item" href="#" @onclick="Logout">Logout</a></DropdownItem>
+								</DropdownMenu>
+							</Dropdown>
+						</Authorized>
+						<NotAuthorized>
+							<li><a class="dropdown-item" href="/login">Login</a></li>
+						</NotAuthorized>
+					</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+	<main>
+		<article class="content px-4">
+			<CascadingValue Value="OnCartUpdated">
+				@Body
+			</CascadingValue>
+		</article>
+	</main>
 </div>
 
 
+
 @code {
-    private int _cartItemCount = 0;
+	private int _cartItemCount = 0;
 
-    protected override async Task OnInitializedAsync()
-    {
-        _cartItemCount = await CartService.GetCartItemsCount("1") ?? 0;
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		_cartItemCount = await CartService.GetCartItemsCount("1") ?? 0;
+	}
 
-    private async Task OnCartUpdated(int newCount)
-    {
-        _cartItemCount = newCount;
-        StateHasChanged();
-    }
+	private async Task OnCartUpdated(int newCount)
+	{
+		_cartItemCount = newCount;
+		StateHasChanged();
+	}
+
+	private async Task Logout()
+	{
+		if (AuthStateProvider is CustomAuthStateProvider customState)
+		{
+			await customState.UpdateAuthenticationState(null);
+		}
+
+		NavigationManager.NavigateTo("/login", forceLoad: true);
+	}
 }

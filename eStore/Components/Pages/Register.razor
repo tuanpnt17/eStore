@@ -4,40 +4,93 @@
 @using BusinessObject.Contracts
 @using BusinessObject.Models
 @inject IMemberService MemberService
-<h3>Register</h3>
+@inject SweetAlertService Swal;
+@inject NavigationManager NavigationManager
 
+<h3 class="text-center text-primary">Register</h3>
 
-<form method="post" @onsubmit="HandleRegister" @formname="starship-plain-form">
-    <AntiforgeryToken />
-    <div>
-        <label>
-            Identifier:
-            <InputText @bind-Value="Member.Email" />
-        </label>
-    </div>
-    <div>
-        <label>
-            Identifier:
-            <InputText @bind-Value="Member.Password" />
-        </label>
-    </div>
-    <div>
-        <button type="submit">Submit</button>
-    </div>
-</form>
+<div class="container mt-4">
+	<EditForm Model="Member" OnValidSubmit="HandleRegister" class="card p-4 shadow-sm">
+		<DataAnnotationsValidator />
+		<AntiforgeryToken />
+
+		<div class="mb-3">
+			<label class="form-label">Email:</label>
+			<InputText @bind-Value="Member.Email" class="form-control" />
+			<ValidationMessage For="() => Member.Email" class="text-danger" />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Password:</label>
+			<InputText @bind-Value="Member.Password" type="password" class="form-control" />
+			<ValidationMessage For="() => Member.Password" class="text-danger" />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Company Name:</label>
+			<InputText @bind-Value="Member.CompanyName" class="form-control" />
+			<ValidationMessage For="() => Member.CompanyName" class="text-danger" />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Country:</label>
+			<InputText @bind-Value="Member.Country" class="form-control" />
+			<ValidationMessage For="() => Member.Country" class="text-danger" />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">City:</label>
+			<InputText @bind-Value="Member.City" class="form-control" />
+			<ValidationMessage For="() => Member.City" class="text-danger" />
+		</div>
+
+		<div class="d-grid">
+			<button type="submit" class="btn btn-primary">Register</button>
+		</div>
+
+		@if (!string.IsNullOrEmpty(ErrorMessage))
+		{
+			<p class="text-danger text-center mt-3">@ErrorMessage</p>
+		}
+	</EditForm>
+</div>
 
 @code {
-    [SupplyParameterFromForm]
-    private MemberDTO Member { get; set; } = new()
+	[SupplyParameterFromForm]
+	private MemberDTO Member { get; set; } = new()
 		{
 			Email = "",
 			Password = "",
-            CompanyName = "",
+			CompanyName = "",
 			Country = "",
 			City = ""
 		};
-    private async Task HandleRegister()
-    {
-        // await MemberService.Register(Member);
+
+	private string ErrorMessage { get; set; } = string.Empty;
+
+	private async Task HandleRegister()
+	{
+		try
+		{
+			await MemberService.Register(Member);
+			ErrorMessage = string.Empty;
+			var result = await Swal.FireAsync(new SweetAlertOptions
+				{
+					Title = "Thành công",
+					Text = $"Đăng kí thành công!",
+					Icon = SweetAlertIcon.Success,
+					ShowCancelButton = true,
+					ConfirmButtonText = "Ok",
+				});
+
+			if (result.IsConfirmed)
+			{
+				NavigationManager.NavigateTo("/Login");
+			}
+		}
+		catch (Exception e)
+		{
+			ErrorMessage = e.Message;
+		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -22,10 +21,17 @@ namespace eStore.Helpers
             {
                 var token = await _sessionStorage.GetAsync<UserSession>("UserSession");
                 var userSession = token.Success ? token.Value : null;
+                if(userSession == null)
+                {
+                    return await Task.FromResult(new AuthenticationState(_anomyous));
+                }
                 var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
             {
                 new Claim(ClaimTypes.Name, userSession.Email),
-                new Claim(ClaimTypes.Role, userSession.Role)
+                new Claim(ClaimTypes.Role, userSession.Role),
+                new Claim(ClaimTypes.StreetAddress, userSession.City),
+                new Claim(ClaimTypes.Country, userSession.Country),
+                new Claim(ClaimTypes.NameIdentifier, userSession.Id.ToString())
             }, "CustomAuth"));
 
                 return await Task.FromResult(new AuthenticationState(claimsPrincipal));
@@ -36,18 +42,29 @@ namespace eStore.Helpers
                 return await Task.FromResult(new AuthenticationState(_anomyous));
 
             }
-
-
         }
         public async Task UpdateAuthenticationState(UserSession userSession)
         {
-            await _sessionStorage.SetAsync("UserSession", userSession);
-            var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+            ClaimsPrincipal claimsPrincipal;
+            if (userSession != null)
+            {
+                await _sessionStorage.SetAsync("UserSession", userSession);
+                 claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
             {
                 new Claim(ClaimTypes.Name, userSession.Email),
-                new Claim(ClaimTypes.Role, userSession.Role)
+                new Claim(ClaimTypes.Role, userSession.Role),
+                new Claim(ClaimTypes.StreetAddress, userSession.City),
+                new Claim(ClaimTypes.Country, userSession.Country),
+                new Claim(ClaimTypes.NameIdentifier, userSession.Id.ToString())
             }, "CustomAuth"));
-            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
+                NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
+            }
+            else
+            {
+                await _sessionStorage.DeleteAsync("UserSession");
+                claimsPrincipal = _anomyous;
+            }
+            
         }
         //public async Task MarkUserAsAuthenticated(string token)
         //{

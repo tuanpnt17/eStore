@@ -1,70 +1,103 @@
 ﻿@page "/members/edit"
 @using BusinessObject.Contracts
 @using BusinessObject.Models
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @inject NavigationManager NavigationManager
 @inject IMemberService MemberService
-<h3>UpdateProfile</h3>
+@inject AuthenticationStateProvider AuthStateProvider
+@inject SweetAlertService Swal;
 
-@if (Member is null)
-{
-	<p><em>Loading...</em></p>
-}
-else
-{
-	<div class="row">
-		<div class="col-md-4">
-			<EditForm Model="Member" OnValidSubmit="UpdateMemebr" FormName="edit" Enhance>
-				
-				<div class="mb-3">
-					<label for="email" class="form-label">Email:</label>
-					<InputText id="email" @bind-Value="Member.Email" class="form-control" aria-required="true" />
-					<ValidationMessage For="() => Member.Email" class="text-danger" />
-				</div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Country:</label>
-                    <InputText id="email" @bind-Value="Member.Country" class="form-control" aria-required="true" />
-                    <ValidationMessage For="() => Member.Country" class="text-danger" />
+<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+    <Authorized>
+        <h3>Trang cá nhân</h3>
+        @if (Member is null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <EditForm Model="Member" OnValidSubmit="UpdateMemeber" Context="editContext" Enhance>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <InputText readonly id="email" @bind-Value="Member.Email" class="form-control" aria-required="true" />
+                            <ValidationMessage For="() => Member.Email" class="text-danger" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Country:</label>
+                            <InputText id="email" @bind-Value="Member.Country" class="form-control" aria-required="true" />
+                            <ValidationMessage For="() => Member.Country" class="text-danger" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">City:</label>
+                            <InputText id="email" @bind-Value="Member.City" class="form-control" aria-required="true" />
+                            <ValidationMessage For="() => Member.City" class="text-danger" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">CompanyName:</label>
+                            <InputText id="email" @bind-Value="Member.CompanyName" class="form-control" aria-required="true" />
+                            <ValidationMessage For="() => Member.CompanyName" class="text-danger" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password:</label>
+                            <InputText id="password" @bind-Value="Member.Password" type="password" class="form-control" aria-required="true" />
+                            <ValidationMessage For="() => Member.Password" class="text-danger" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </EditForm>
                 </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">City:</label>
-                    <InputText id="email" @bind-Value="Member.City" class="form-control" aria-required="true" />
-                    <ValidationMessage For="() => Member.City" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">CompanyName:</label>
-                    <InputText id="email" @bind-Value="Member.CompanyName" class="form-control" aria-required="true" />
-                    <ValidationMessage For="() => Member.CompanyName" class="text-danger" />
-                </div>
-				<div class="mb-3">
-					<label for="password" class="form-label">Password:</label>
-					<InputText id="password" @bind-Value="Member.Password" class="form-control" aria-required="true" />
-					<ValidationMessage For="() => Member.Password" class="text-danger" />
-				</div>
-				
-				<button type="submit" class="btn btn-primary">Save</button>
-			</EditForm>
-		</div>
-	</div>
-}
+            </div>
+
+        }
+    </Authorized>
+</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
 @code {
-    [SupplyParameterFromQuery]
-    private int MemberId { get; set; }
+    private int MemberId { get; set; } 
 
     [SupplyParameterFromForm]
     private MemberDTO? Member { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
-        Member = await MemberService.GetMember(MemberId);
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            var memberIdClaim = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(memberIdClaim, out int memberId))
+            {
+                MemberId = memberId;
+                Member = await MemberService.GetMember(MemberId);
+            }
+        }
         
     }
 
-    private async Task UpdateMemebr()
+    private async Task UpdateMemeber()
     {
         try
         {
             await MemberService.UpdateProfile(Member);
-            NavigationManager.NavigateTo("/products");
+
+            var result = await Swal.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Thành công",
+                    Text = $"Cập nhật thành công!",
+                    Icon = SweetAlertIcon.Success,
+                    ShowCancelButton = true,
+                    ConfirmButtonText = "Ok",
+                });
+
+            if (result.IsConfirmed)
+            {
+                NavigationManager.NavigateTo("./Members/Edit");
+            }
         }
         catch (Exception)
         {

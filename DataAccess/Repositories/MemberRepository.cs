@@ -6,9 +6,15 @@ namespace DataAccess.Repositories;
 
 public class MemberRepository(AppDbContext context) : IMemberRepository
 {
-    public async Task<Member> GetMemberById(int memberId)
+    public bool CheckExistingEmail(string email)
     {
-        return await context.Members.FirstOrDefaultAsync(x => x.MemberId == memberId);
+        return context.Members.Any(x => x.Email == email);
+    }
+
+    public async Task<Member?> GetMemberById(int memberId)
+    {
+        return await context.Members.FindAsync(memberId);
+        ;
     }
 
     public async Task<Member> Login(string username, string password)

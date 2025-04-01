@@ -3,6 +3,8 @@ using CurrieTechnologies.Razor.SweetAlert2;
 using DataAccess.Interfaces;
 using DataAccess.Repositories;
 using eStore.Components;
+using eStore.Helpers;
+using Microsoft.AspNetCore.Components.Authorization;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,9 +46,11 @@ services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 services.AddScoped<IMemberRepository, MemberRepository>();
 services.AddScoped<IProductService, ProductService>();
 services.AddScoped<ICartService, CartService>();
-
+services.AddScoped<IMemberService, MemberService>();
+services.AddScoped<IMemberRepository, MemberRepository>();
+services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 services.AddQuickGridEntityFrameworkAdapter();
-
+services.AddBlazorBootstrap();
 services.AddDatabaseDeveloperPageExceptionFilter();
 var app = builder.Build();
 
