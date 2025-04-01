@@ -29,23 +29,26 @@ public static class AppDbContextSeed
                 }
             }
 
-            if (!context.Products.Any())
-            {
-                var productData = await File.ReadAllTextAsync(
-                    Path.Combine(SeedDataPath, "products.json")
-                );
-                var products = JsonSerializer.Deserialize<List<Product>>(productData);
-                if (products != null)
-                {
-                    foreach (var item in products)
-                    {
-                        context.Products.Add(item);
-                    }
-                    await context.SaveChangesAsync();
-                }
-            }
+			if (!context.Products.Any())
+			{
+				var productData = await File.ReadAllTextAsync(
+					Path.Combine(SeedDataPath, "products.json")
+				);
+				var products = JsonSerializer.Deserialize<List<Product>>(productData);
 
-            if (!context.Members.Any())
+				if (products != null)
+				{
+					foreach (var item in products)
+					{
+						item.Category = context.Categories.First(c => c.CategoryId == item.CategoryId);
+						context.Products.Add(item);
+					}
+
+					await context.SaveChangesAsync();
+				}
+			}
+
+			if (!context.Members.Any())
             {
                 var memberData = await File.ReadAllTextAsync(
                     Path.Combine(SeedDataPath, "members.json")

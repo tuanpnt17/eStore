@@ -1,8 +1,14 @@
+﻿using BusinessObject.Hubs;
 using BusinessObject.Services;
+using CurrieTechnologies.Razor.SweetAlert2;
 using DataAccess.Interfaces;
 using DataAccess.Repositories;
 using eStore.Components;
+using eStore.Helpers;
 using eStore.Hubs;
+using Microsoft.AspNetCore.Components.Authorization;
+using StackExchange.Redis;
+using VNPAY.NET;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +17,33 @@ var services = builder.Services;
 var configuration = builder.Configuration;
 services.AddRazorComponents().AddInteractiveServerComponents();
 
-services.AddDbContextFactory<AppDbContext>(options =>
+services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
 );
+
+services.AddSingleton<IConnectionMultiplexer>(opts =>
+{
+    var options = new ConfigurationOptions
+    {
+        EndPoints = { configuration["Redis:Server"]! },
+        User = configuration["Redis:User"],
+        Password = configuration["Redis:Password"],
+        Ssl = true,
+        AbortOnConnectFail = false,
+        ConnectRetry = 3,
+        ConnectTimeout = 10000,
+        KeepAlive = 30,
+        SyncTimeout = 10000,
+    };
+    return ConnectionMultiplexer.Connect(options);
+});
+
+services.AddSweetAlert2();
+
+services.AddSingleton<IVnpay, Vnpay>();
+services.AddHttpContextAccessor();
+services.AddHttpClient();
+
 services.AddAutoMapper(typeof(AppDomain));
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 services.AddScoped<IProductRepository, ProductRepository>();
@@ -21,12 +51,17 @@ services.AddScoped<IOrderRepository, OrderRepository>();
 services.AddScoped<ICategoryRepository, CategoryRepository>();
 services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 services.AddScoped<IMemberRepository, MemberRepository>();
+services.AddScoped<IMemberService, MemberService>();
 services.AddScoped<IProductService, ProductService>();
+services.AddScoped<ICartService, CartService>();
+services.AddScoped<IMemberService, MemberService>();
+services.AddScoped<IMemberRepository, MemberRepository>();
+services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 services.AddScoped<IOrderService, OrderService>();
 services.AddScoped<ICategoryService, CategoryService>();
 
 services.AddQuickGridEntityFrameworkAdapter();
-
+services.AddBlazorBootstrap();
 services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddResponseCompression(options =>
 {
@@ -51,6 +86,8 @@ app.UseAntiforgery();
 
 //app.MapBlazorHub();
 app.MapHub<OrderHub>(OrderHub.HubUrl);
+app.MapHub<ProductHub>("/producthub");
+app.MapHub<MemberHub>("/memberhub");
 app.MapHub<CategoryHub>(CategoryHub.HubUrl);
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 

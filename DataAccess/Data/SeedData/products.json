@@ -4,48 +4,2015 @@
     "ProductName": "Nhẫn vàng 18K",
     "Weight": "5 gram",
     "UnitPrice": 4500000,
-    "UnitsInStock": 100
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
   },
   {
     "CategoryId": 1,
     "ProductName": "Dây chuyền vàng 24K",
     "Weight": "10 gram",
     "UnitPrice": 9500000,
-    "UnitsInStock": 70
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
   },
   {
     "CategoryId": 2,
     "ProductName": "Nhẫn kim cương",
     "Weight": "3 gram",
     "UnitPrice": 25000000,
-    "UnitsInStock": 50
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
   },
   {
     "CategoryId": 3,
     "ProductName": "Bông tai ngọc trai",
     "Weight": "2 gram",
     "UnitPrice": 8500000,
-    "UnitsInStock": 60
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
   },
   {
     "CategoryId": 4,
     "ProductName": "Lắc tay bạc 925",
     "Weight": "8 gram",
     "UnitPrice": 1500000,
-    "UnitsInStock": 90
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
   },
   {
     "CategoryId": 2,
     "ProductName": "Dây chuyền kim cương",
     "Weight": "5 gram",
     "UnitPrice": 40000000,
-    "UnitsInStock": 30
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
   },
   {
     "CategoryId": 3,
     "ProductName": "Vòng cổ ngọc trai",
     "Weight": "15 gram",
     "UnitPrice": 20000000,
-    "UnitsInStock": 40
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Nhẫn vàng 18K",
+    "Weight": "5 gram",
+    "UnitPrice": 4500000,
+    "UnitsInStock": 100,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 1,
+    "ProductName": "Dây chuyền vàng 24K",
+    "Weight": "10 gram",
+    "UnitPrice": 9500000,
+    "UnitsInStock": 70,
+    "Category": {
+      "CategoryId": 1,
+      "CategoryName": "Trang sức vàng",
+      "CategoryDescription": "Các sản phẩm trang sức làm từ vàng 18K, 24K."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Nhẫn kim cương",
+    "Weight": "3 gram",
+    "UnitPrice": 25000000,
+    "UnitsInStock": 50,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Bông tai ngọc trai",
+    "Weight": "2 gram",
+    "UnitPrice": 8500000,
+    "UnitsInStock": 60,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
+  },
+  {
+    "CategoryId": 4,
+    "ProductName": "Lắc tay bạc 925",
+    "Weight": "8 gram",
+    "UnitPrice": 1500000,
+    "UnitsInStock": 90,
+    "Category": {
+      "CategoryId": 4,
+      "CategoryName": "Bạc cao cấp",
+      "CategoryDescription": "Trang sức bạc 925 tinh xảo, hiện đại."
+    }
+  },
+  {
+    "CategoryId": 2,
+    "ProductName": "Dây chuyền kim cương",
+    "Weight": "5 gram",
+    "UnitPrice": 40000000,
+    "UnitsInStock": 30,
+    "Category": {
+      "CategoryId": 2,
+      "CategoryName": "Kim cương",
+      "CategoryDescription": "Trang sức kim cương cao cấp, sang trọng."
+    }
+  },
+  {
+    "CategoryId": 3,
+    "ProductName": "Vòng cổ ngọc trai",
+    "Weight": "15 gram",
+    "UnitPrice": 20000000,
+    "UnitsInStock": 40,
+    "Category": {
+      "CategoryId": 3,
+      "CategoryName": "Ngọc trai",
+      "CategoryDescription": "Bộ sưu tập trang sức ngọc trai tự nhiên."
+    }
   }
 ]

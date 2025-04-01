@@ -1,0 +1,100 @@
+﻿@page "/login"
+
+@using BusinessObject.Contracts
+@using BusinessObject.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using eStore.Helpers
+@using System.ComponentModel.DataAnnotations
+@inject IJSRuntime js
+@inject IMemberService MemberService
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h3 class="text-center mt-4">Đăng nhập</h3>
+
+<EditForm Model="@model" OnValidSubmit="HandleLogin" class="container mt-3 p-4 border rounded shadow-sm bg-light">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label class="form-label">Email:</label>
+        <InputText @bind-Value="model.Email" class="form-control" />
+        <ValidationMessage For="@(() => model.Email)" class="text-danger" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Mật khẩu:</label>
+        <InputText type="password" @bind-Value="model.Password" class="form-control" />
+        <ValidationMessage For="@(() => model.Password)" class="text-danger" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger">@ErrorMessage</div>
+    }
+
+    <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        <div class="align-content-center justify-content-center" style="margin: auto">
+            Chưa có tài khoản <a href="./register">Đăng kí</a>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public class Model
+    {
+        [Required(ErrorMessage = "Thiếu email.")]
+        [EmailAddress(ErrorMessage = "Sai định dạng.")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Nhập mật khẩu.")]
+        public string Password { get; set; } = string.Empty;
+    }
+
+    private Model model = new Model();
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    private async Task HandleLogin()
+    {
+        ErrorMessage = string.Empty; // Reset error message
+
+        try
+        {
+            var loginResult = await MemberService.Login(model.Email, model.Password);
+            if (loginResult == null)
+            {
+                ErrorMessage = "Invalid email or password.";
+                return;
+            }
+
+            if (AuthStateProvider is CustomAuthStateProvider customAuthStateProvider)
+            {
+                await customAuthStateProvider.UpdateAuthenticationState(new UserSession
+                    {
+                        Id = loginResult.MemberId,
+                        Email = loginResult.Email,
+                        Role = loginResult.Role,
+                        City = loginResult.City,
+                        Country = loginResult.Country
+                    });
+                if (loginResult.Role == "Member")
+                {
+                    Navigation.NavigateTo("/");
+                } else
+                {
+                    Navigation.NavigateTo("/");
+
+                }
+            }
+            else
+            {
+                ErrorMessage = "Authentication provider not properly configured.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "An error occurred during login. Please try again.";
+            Console.WriteLine($"Login error: {ex.Message}");
+        }
+    }
+}

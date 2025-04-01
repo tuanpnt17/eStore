@@ -1,0 +1,580 @@
+﻿@page "/admin/members"
+@using AutoMapper
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BusinessObject.Contracts
+@using BusinessObject.Models.Member
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.SignalR
+@using BusinessObject.Hubs
+@layout MainLayout
+@inject IHubContext<MemberHub> HubContext
+@inject IMemberService MemberService
+@inject IMapper Mapper
+@inject ILogger<Index> Logger
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+
+<PageTitle>Thành viên</PageTitle>
+
+<h1>Danh sách thành viên</h1>
+
+<p>
+    <button class="btn btn-success" @onclick="() => showCreatePopup = true">Tạo mới</button>
+</p>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <input type="text" @bind="searchTerm" @oninput="HandleSearchInput" placeholder="Tìm kiếm thành viên..." class="form-control" />
+    </div>
+</div>
+<button @onclick="async () => { currentPage = 1; await SearchMembers(); }" class="btn btn-primary">Tìm kiếm</button>
+
+@if (members is not null && members.Count > 0)
+{
+    <QuickGrid Class="table" Items="members.AsQueryable()" @bind-PageSize="pageSize">
+        <PropertyColumn Property="member => member.Email" Title="Email" />
+        <PropertyColumn Property="member => member.CompanyName" Title="Tên công ty" />
+        <PropertyColumn Property="member => member.City" Title="Thành phố" />
+        <PropertyColumn Property="member => member.Country" Title="Quốc gia" />
+
+        <TemplateColumn Context="member" Align="Align.Left">
+            <HeaderTemplate>
+                Hành động
+            </HeaderTemplate>
+            <ChildContent>
+                <button class="btn btn-warning" @onclick="() => OpenUpdateForm(member.MemberId)">Sửa</button> |
+                <button class="btn btn-secondary" @onclick="() => OpenDetailForm(member.MemberId)">Chi tiết</button> |
+                <button class="btn btn-danger" @onclick="() => OpenDeleteForm(member.MemberId)">Xóa</button>
+            </ChildContent>
+        </TemplateColumn>
+    </QuickGrid>
+
+    <nav>
+        <ul class="pagination justify-content-center mt-3">
+            <li class="page-item @(HasPreviousPage ? "" : "disabled")">
+                <button class="page-link" @onclick="async () => await GoToPage(currentPage - 1)">Trước</button>
+            </li>
+
+            @if (totalPages <= 7)
+            {
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    int pageNumber = i;
+                    <li class="page-item @(currentPage == i ? "active" : "")">
+                        <button class="page-link" @onclick="async () => await GoToPage(pageNumber)">@pageNumber</button>
+                    </li>
+                }
+            }
+            else
+            {
+                <li class="page-item @(currentPage == 1 ? "active" : "")">
+                    <button class="page-link" @onclick="async () => await GoToPage(1)">1</button>
+                </li>
+
+                @if (currentPage > 4)
+                {
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                }
+
+                @for (int i = Math.Max(2, currentPage - 2); i <= Math.Min(totalPages - 1, currentPage + 2); i++)
+                {
+                    int pageNumber = i;
+                    <li class="page-item @(currentPage == i ? "active" : "")">
+                        <button class="page-link" @onclick="async () => await GoToPage(pageNumber)">@pageNumber</button>
+                    </li>
+                }
+
+                @if (currentPage < totalPages - 3)
+                {
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                }
+
+                <li class="page-item @(currentPage == totalPages ? "active" : "")">
+                    <button class="page-link" @onclick="async () => await GoToPage(totalPages)">@totalPages</button>
+                </li>
+            }
+
+            <li class="page-item @(HasNextPage ? "" : "disabled")">
+                <button class="page-link" @onclick="async () => await GoToPage(currentPage + 1)">Sau</button>
+            </li>
+        </ul>
+    </nav>
+}
+else
+{
+    <p>Không tìm thấy thành viên.</p>
+}
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger mt-3">
+        @errorMessage
+    </div>
+}
+
+@if (showCreatePopup)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tạo thành viên</h5>
+                    <button type="button" class="close" aria-label="Close" @onclick="() => showCreatePopup = false">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="createMember" OnValidSubmit="HandleCreateSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input type="email" class="form-control" @bind="createMember.Email" />
+                            <ValidationMessage For="@(() => createMember.Email)" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Tên công ty</label>
+                            <input type="text" class="form-control" @bind="createMember.CompanyName" />
+                            <ValidationMessage For="@(() => createMember.CompanyName)" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Thành phố</label>
+                            <input type="text" class="form-control" @bind="createMember.City" />
+                            <ValidationMessage For="@(() => createMember.City)" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Quốc gia</label>
+                            <input type="text" class="form-control" @bind="createMember.Country" />
+                            <ValidationMessage For="@(() => createMember.Country)" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Mật khẩu</label>
+                            <input type="password" class="form-control" @bind="createMember.Password" />
+                            <ValidationMessage For="@(() => createMember.Password)" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Tạo</button>
+                            <button type="button" class="btn btn-secondary" @onclick="() => showCreatePopup = false">Hủy</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@if (showUpdatePopup && updateMember != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sửa thành viên</h5>
+                    <button type="button" class="close" aria-label="Close" @onclick="() => showUpdatePopup = false">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="updateMember" OnValidSubmit="HandleUpdateSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input type="email" class="form-control" @bind="updateMember.Email" />
+                            <ValidationMessage For="@(() => updateMember.Email)" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Tên công ty</label>
+                            <input type="text" class="form-control" @bind="updateMember.CompanyName" />
+                            <ValidationMessage For="@(() => updateMember.CompanyName)" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Thành phố</label>
+                            <input type="text" class="form-control" @bind="updateMember.City" />
+                            <ValidationMessage For="@(() => updateMember.City)" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Quốc gia</label>
+                            <input type="text" class="form-control" @bind="updateMember.Country" />
+                            <ValidationMessage For="@(() => updateMember.Country)" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Mật khẩu</label>
+                            <input type="password" class="form-control" @bind="updateMember.Password" />
+                            <ValidationMessage For="@(() => updateMember.Password)" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            <button type="button" class="btn btn-secondary" @onclick="() => showUpdatePopup = false">Hủy</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@if (showDetailPopup)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chi tiết thành viên</h5>
+                    <button type="button" class="close" aria-label="Close" @onclick="() => showDetailPopup = false">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <th>Email</th>
+                            <td>@detailMember.Email</td>
+                        </tr>
+                        <tr>
+                            <th>Tên công ty</th>
+                            <td>@detailMember.CompanyName</td>
+                        </tr>
+                        <tr>
+                            <th>Thành phố</th>
+                            <td>@detailMember.City</td>
+                        </tr>
+                        <tr>
+                            <th>Quốc gia</th>
+                            <td>@detailMember.Country</td>
+                        </tr>
+                    </table>
+                    <button class="btn btn-secondary" @onclick="() => showDetailPopup = false">Quay lại danh sách</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@if (showDeletePopup && deleteMember != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xóa thành viên</h5>
+                    <button type="button" class="close" aria-label="Close" @onclick="() => showDeletePopup = false">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa thành viên này không?</p>
+                    <table class="table">
+                        <tr>
+                            <th>Email</th>
+                            <td>@deleteMember.Email</td>
+                        </tr>
+                        <tr>
+                            <th>Tên công ty</th>
+                            <td>@deleteMember.CompanyName</td>
+                        </tr>
+                        <tr>
+                            <th>Thành phố</th>
+                            <td>@deleteMember.City</td>
+                        </tr>
+                        <tr>
+                            <th>Quốc gia</th>
+                            <td>@deleteMember.Country</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" @onclick="HandleDeleteSubmit">Xóa</button>
+                    <button class="btn btn-secondary" @onclick="() => showDeletePopup = false">Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private HubConnection? hubConnection;
+    private bool _isDisposing = false;
+    private List<MemberViewDTO>? members = new();
+    private string searchTerm = "";
+    private int currentPage = 1;
+    private int pageSize = 5;
+    private int totalPages = 1;
+    private bool isSearching = false;
+    private string? _hubUrl;
+    private readonly string MemberHubUrl = "/memberhub";
+    private string? errorMessage;
+
+    private CreateMemberDTO createMember = new()
+        {
+            Email = string.Empty,
+            CompanyName = string.Empty,
+            City = string.Empty,
+            Country = string.Empty,
+            Password = string.Empty
+        };
+    private UpdateMemberDTO? updateMember;
+    private MemberViewDTO? detailMember;
+    private MemberViewDTO? deleteMember;
+
+    private bool showCreatePopup = false;
+    private bool showUpdatePopup = false;
+    private bool showDetailPopup = false;
+    private bool showDeletePopup = false;
+    private System.Timers.Timer? searchDebounceTimer;
+
+    protected override void OnInitialized()
+    {
+        Logger.LogInformation("Attempting to connect to SignalR at: {Url}", NavigationManager.ToAbsoluteUri("/memberhub"));
+        string baseUrl = NavigationManager.BaseUri;
+        _hubUrl = baseUrl.TrimEnd('/') + MemberHubUrl;
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(_hubUrl)
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On("ReceiveMemberUpdate", async () =>
+        {
+            Logger.LogInformation("Received member update from SignalR");
+            await InvokeAsync(async () => await LoadData());
+        });
+
+        hubConnection.Closed += async (error) =>
+        {
+            Logger.LogError(error, "SignalR connection closed");
+            if (_isDisposing) return;
+            await Task.Delay(1000);
+            if (hubConnection.State != HubConnectionState.Disconnected) return;
+            try
+            {
+                await hubConnection.StartAsync();
+                Logger.LogInformation("SignalR reconnected successfully");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to reconnect SignalR");
+            }
+        };
+
+        hubConnection.Reconnecting += (error) =>
+        {
+            Logger.LogWarning("Attempting to reconnect...");
+            return Task.CompletedTask;
+        };
+
+        hubConnection.Reconnected += (connectionId) =>
+        {
+            Logger.LogInformation("Reconnected to SignalR with connection ID: {0}", connectionId);
+            return Task.CompletedTask;
+        };
+
+        searchDebounceTimer = new System.Timers.Timer(300);
+        searchDebounceTimer.Elapsed += async (sender, e) =>
+        {
+            searchDebounceTimer.Stop();
+            await InvokeAsync(async () =>
+            {
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    await LoadMembers();
+                }
+                else
+                {
+                    await SearchMembers();
+                }
+            });
+        };
+        searchDebounceTimer.AutoReset = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await hubConnection.StartAsync();
+                Logger.LogInformation("SignalR connection started");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to start SignalR connection");
+            }
+            await LoadMembers();
+        }
+    }
+
+    private async Task LoadMembers()
+    {
+        var pagedResult = await MemberService.GetPagedMembersAsync(currentPage, pageSize);
+        members = pagedResult.Items.ToList();
+        totalPages = pagedResult.TotalPages;
+        isSearching = false;
+        errorMessage = null;
+        StateHasChanged();
+    }
+
+    private async Task SearchMembers()
+    {
+        var pagedResult = await MemberService.SearchMembersAsync(searchTerm, currentPage, pageSize);
+        if (pagedResult.Items.Any())
+        {
+            members = pagedResult.Items.ToList();
+            totalPages = pagedResult.TotalPages;
+        }
+        else
+        {
+            members = new List<MemberViewDTO>();
+            totalPages = 1;
+        }
+        isSearching = true;
+        errorMessage = null;
+        StateHasChanged();
+    }
+
+    private async Task GoToPage(int page)
+    {
+        if (page >= 1 && page <= totalPages)
+        {
+            currentPage = page;
+            await LoadData();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        if (isSearching)
+            await SearchMembers();
+        else
+            await LoadMembers();
+    }
+
+    private bool HasPreviousPage => currentPage > 1;
+    private bool HasNextPage => currentPage < totalPages;
+
+    public async ValueTask DisposeAsync()
+    {
+        _isDisposing = true;
+        if (hubConnection != null)
+        {
+            await hubConnection.DisposeAsync();
+            Logger.LogInformation("SignalR connection disposed");
+        }
+        searchDebounceTimer?.Dispose();
+    }
+
+    private async Task HandleCreateSubmit()
+    {
+        try
+        {
+            await MemberService.AddMemberAsync(createMember);
+            await HubContext.Clients.All.SendAsync("ReceiveMemberUpdate");
+            showCreatePopup = false;
+            createMember = new()
+                {
+                    Email = string.Empty,
+                    CompanyName = string.Empty,
+                    City = string.Empty,
+                    Country = string.Empty,
+                    Password = string.Empty
+                };
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private async Task OpenUpdateForm(int id)
+    {
+        var existingMember = await MemberService.GetMemberByIdAsync(id);
+        if (existingMember != null)
+        {
+            updateMember = Mapper.Map<UpdateMemberDTO>(existingMember);
+            updateMember.MemberId = id; 
+        }
+        showUpdatePopup = true;
+    }
+
+    private async Task HandleUpdateSubmit()
+    {
+        try
+        {
+            if (updateMember != null)
+            {
+                await MemberService.UpdateMemberAsync(updateMember);
+                await HubContext.Clients.All.SendAsync("ReceiveMemberUpdate");
+                showUpdatePopup = false;
+                updateMember = null;
+                await LoadData();
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            errorMessage = ex.Message; 
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private async Task OpenDetailForm(int id)
+    {
+        var existingMember = await MemberService.GetMemberByIdAsync(id);
+        if (existingMember != null)
+        {
+            detailMember = Mapper.Map<MemberViewDTO>(existingMember);
+        }
+        showDetailPopup = true;
+    }
+
+    private async Task OpenDeleteForm(int id)
+    {
+        var existingMember = await MemberService.GetMemberByIdAsync(id);
+        if (existingMember != null)
+        {
+            deleteMember = Mapper.Map<MemberViewDTO>(existingMember);
+        }
+        showDeletePopup = true;
+    }
+
+    private async Task HandleDeleteSubmit()
+    {
+        try
+        {
+            if (deleteMember != null)
+            {
+                await MemberService.DeleteMemberAsync(deleteMember.MemberId);
+                await HubContext.Clients.All.SendAsync("ReceiveMemberUpdate");
+                showDeletePopup = false;
+                deleteMember = null;
+                await LoadData();
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            errorMessage = ex.Message; // "Cannot delete member because it has related orders."
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private void HandleSearchInput(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? "";
+        currentPage = 1;
+        searchDebounceTimer?.Stop();
+        searchDebounceTimer?.Start();
+    }
+}
