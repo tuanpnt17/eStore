@@ -7,6 +7,25 @@ namespace BusinessObject.Services;
 
 public class MemberService(IUnitOfWork unitOfWork) : IMemberService 
 {
+    public async Task<MemberDTO> GetMember(int id)
+    {
+        var member = await unitOfWork.MemberRepository.GetMemberById(id);
+        if (member == null)
+        {
+            return null;
+        }
+        
+        return new MemberDTO
+        {
+            MemberId = member.MemberId,
+            Email = member.Email,
+            Password = member.Password,
+            City = member.City,
+            Country = member.Country,
+            CompanyName = member.CompanyName
+        };
+    }
+
     public async Task<MemberDTO> Login(string email, string password)
     {
         var member = await unitOfWork.MemberRepository.Login(email, password);

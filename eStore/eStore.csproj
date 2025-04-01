@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Pages\Members\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
 

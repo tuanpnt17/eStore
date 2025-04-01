@@ -4,6 +4,7 @@ namespace BusinessObject.Models;
 
 public class MemberDTO 
 {
+    public int MemberId { get; set; }
     public required string Email { get; set; }
 
     [Required, StringLength(40)]
