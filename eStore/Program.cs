@@ -4,6 +4,7 @@ using DataAccess.Interfaces;
 using DataAccess.Repositories;
 using eStore.Components;
 using StackExchange.Redis;
+using VNPAY.NET;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,10 @@ services.AddSingleton<IConnectionMultiplexer>(opts =>
 });
 
 services.AddSweetAlert2();
+
+services.AddSingleton<IVnpay, Vnpay>();
+services.AddHttpContextAccessor();
+services.AddHttpClient();
 
 services.AddAutoMapper(typeof(AppDomain));
 services.AddScoped<IUnitOfWork, UnitOfWork>();

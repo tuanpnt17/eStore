@@ -1,40 +1,39 @@
 ﻿@page "/checkout"
 @using BusinessObject.Models
-@using Microsoft.EntityFrameworkCore
-@using DataAccess.Entities
-@using DataAccess.Data
-@using eStore.ViewModels
+@using VNPAY.NET;
+@using VNPAY.NET.Enums
+@using VNPAY.NET.Models
+@using VNPAY.NET.Utilities
 @inject ICartService CartService
 @inject SweetAlertService Swal
 @inject NavigationManager NavigationManager
+@inject IVnpay Vnpayment
+@inject IConfiguration Configuration
 
 <PageTitle>Thanh toán</PageTitle>
 
-<h1 class="text-warning">THANH TOÁN</h1>
-@if(_cartDto != null && _cartDto.Items.Any())
+<h1 class="text-warning text-center fw-bold mb-3">THANH TOÁN</h1>
+@if (_cartDto != null && _cartDto.Items.Any())
 {
     <div class="row">
         <!-- Thông tin khách hàng -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card p-3">
                 <h5 class="card-header">THÔNG TIN KHÁCH HÀNG</h5>
                 <div class="card-body">
-                    <input type="text" class="form-control mb-2" placeholder="Họ và tên" @bind="customerInfo.FullName" />
-                    <input type="text" class="form-control mb-2" placeholder="Điện thoại" @bind="customerInfo.Phone" />
-                    <select class="form-control mb-2" @bind="customerInfo.City">
-                        <option>Chọn tỉnh/thành phố</option>
-                        <option value="Hà Nội">Hà Nội</option>
-                        <option value="TP Hồ Chí Minh">TP Hồ Chí Minh</option>
-                    </select>
-                    <input type="text" class="form-control mb-2" placeholder="Địa chỉ" @bind="customerInfo.Address" />
                     <input type="email" class="form-control mb-2" placeholder="Email" @bind="customerInfo.Email" />
-                    <textarea class="form-control" placeholder="Nội dung" @bind="customerInfo.Note"></textarea>
+                    <input type="text" class="form-control mb-2" placeholder="Công ty" @bind="customerInfo.CompanyName" />
+                    <input type="text" class="form-control mb-2" placeholder="Thành phố" @bind="customerInfo.City" />
+                    <input type="text" class="form-control mb-2" placeholder="Địa chỉ" @bind="customerInfo.Address" />
+                    <button class="btn btn-primary btn-lg" style="width: 100%" @onclick="NavigateUpdateProfile">
+                        <i class="bi bi-pencil me-2"></i> Cập nhật thông tin
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Xác nhận đơn hàng -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card p-3">
                 <h5 class="card-header">XÁC NHẬN ĐƠN HÀNG</h5>
                 <div class="card-body">
@@ -43,13 +42,20 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <strong>@item.ProductName</strong>
-                                <p>@item.Quantity x @item.Price.ToString("N0")Đ</p>
+                                <div>Quantity: <strong>@item.Quantity</strong></div>
+                                <div>Unit price: <span style="text-decoration: line-through; margin-right: 2px">@item.Price.ToString("N0")</span>
+                                    <strong>@((item.Price * (1 - (decimal)item.Discount / 100)).ToString("N0")) VND</strong>
+                                </div>
+                                <div>Sub total:  <strong>@((item.Price * (1 - (decimal)item.Discount / 100) * item.Quantity).ToString("N0")) VND</strong></div>
                             </div>
                         </div>
                         <hr />
                     }
                     <h5 class="text-danger">Tổng cộng: <strong>@_totalPrice.ToString("N0") VND</strong></h5>
-                    <button class="btn btn-warning w-100 mt-3" @onclick="PlaceOrder">HOÀN TẤT ĐẶT HÀNG</button>
+
+                    <button class="btn btn-success btn-lg mt-3" style="width: 100%" @onclick="PlaceOrder">
+                        <i class="bi bi-bag-check me-2"></i> Hoàn tất đơn hàng
+                    </button>
                 </div>
             </div>
         </div>
@@ -60,7 +66,6 @@
 @code {
     private CartDTO _cartDto;
     private decimal _totalPrice = 0;
-    private string paymentMethod = "COD";
     private CustomerInfo customerInfo = new();
 
     protected override async Task OnInitializedAsync()
@@ -73,26 +78,71 @@
         }
         _cartDto = serverCart;
         _totalPrice = _cartDto.Items.Sum(i => i.Price * i.Quantity * ((decimal)(100 - i.Discount) / 100));
+
+
     }
 
     private async Task PlaceOrder()
     {
-        if (string.IsNullOrWhiteSpace(customerInfo.FullName) || string.IsNullOrWhiteSpace(customerInfo.Phone))
-        {
-            await Swal.FireAsync("Lỗi", "Vui lòng nhập đầy đủ thông tin!", "error");
-            return;
-        }
+        // if (string.IsNullOrWhiteSpace(customerInfo.FullName) || string.IsNullOrWhiteSpace(customerInfo.CompanyName))
+        // {
+        //     await Swal.FireAsync("Lỗi", "Vui lòng nhập đầy đủ thông tin!", "error");
+        //     return;
+        // }
 
-        await Swal.FireAsync("Thành công", "Đơn hàng của bạn đã được đặt!", "success");
+        try
+        {
+            var tmnCode = Configuration["Vnpay:TmnCode"]!;
+            var hashSecret = Configuration["Vnpay:HashSecret"]!;
+            var baseUrl = Configuration["Vnpay:BaseUrl"]!;
+            var callbackUrl = Configuration["Vnpay:CallbackUrl"]!;
+
+            Vnpayment.Initialize(
+                tmnCode,
+                hashSecret,
+                baseUrl,
+                callbackUrl
+            );
+
+            var httpContext = new HttpContextAccessor().HttpContext;
+            if (httpContext != null)
+            {
+                var ipAddress = NetworkHelper.GetIpAddress(httpContext); // Lấy địa chỉ IP của thiết bị thực hiện giao dịch
+
+                var request = new PaymentRequest
+                {
+                    PaymentId = DateTime.Now.Ticks,
+                    Money =(double) _totalPrice,
+                    Description = "Payment descritptin ne",
+                    IpAddress = ipAddress,
+                    BankCode = BankCode.ANY, // Tùy chọn. Mặc định là tất cả phương thức giao dịch
+                    CreatedDate = DateTime.Now, // Tùy chọn. Mặc định là thời điểm hiện tại
+                    Currency = Currency.VND, // Tùy chọn. Mặc định là VND (Việt Nam đồng)
+                    Language = DisplayLanguage.Vietnamese // Tùy chọn. Mặc định là tiếng Việt
+                };
+
+                var paymentUrl = Vnpayment.GetPaymentUrl(request);
+
+                NavigationManager.NavigateTo(paymentUrl, forceLoad: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            await Swal.FireAsync("Lỗi", "Lỗi khi cài đặt payment!", "error");
+        }        
     }
 
     private class CustomerInfo
     {
-        public string FullName { get; set; } = string.Empty;
-        public string Phone { get; set; } = string.Empty;
+        public string CompanyName { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string Note { get; set; } = string.Empty;
     }
+
+    private void NavigateUpdateProfile()
+    {
+        NavigationManager.NavigateTo("/"); // Todo: update profile url
+    }
+
 }
