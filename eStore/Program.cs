@@ -7,6 +7,7 @@ using eStore.Components;
 using eStore.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -20,6 +21,7 @@ services.AddRazorComponents().AddInteractiveServerComponents();
 services.AddDbContextFactory<AppDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
 );
+services.AddAuthenticationCore();
 services.AddAutoMapper(typeof(AppDomain));
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 services.AddScoped<IProductRepository, ProductRepository>();
@@ -33,33 +35,33 @@ services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 services.AddScoped<IJWTService, JWTService>();
 
 // Configure JWT authentication
-var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]);
-services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = configuration["Jwt:Issuer"],
-        ValidAudience = configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(key)
-    };
-});
+//var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]);
+//services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//})
+//.AddJwtBearer(options =>
+//{
+//    options.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuer = true,
+//        ValidateAudience = true,
+//        ValidateLifetime = true,
+//        ValidateIssuerSigningKey = true,
+//        ValidIssuer = configuration["Jwt:Issuer"],
+//        ValidAudience = configuration["Jwt:Audience"],
+//        IssuerSigningKey = new SymmetricSecurityKey(key)
+//    };
+//});
 
-services.AddAuthorizationCore(options =>
-{
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-});
-services.AddHttpClient();
-services.AddBlazoredLocalStorage();
-
+//services.AddAuthorizationCore(options =>
+//{
+//    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+//});
+//services.AddHttpClient();
+//services.AddBlazoredLocalStorage();
+services.AddScoped<ProtectedSessionStorage>();
 services.AddQuickGridEntityFrameworkAdapter();
 
 services.AddDatabaseDeveloperPageExceptionFilter();

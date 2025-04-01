@@ -1,107 +1,106 @@
 ﻿@page "/login"
-@using Blazored.LocalStorage
 @using BusinessObject.Contracts
-@using System.Security.Claims
 @using BusinessObject.Services
 @using Microsoft.AspNetCore.Components.Authorization
-@using System.ComponentModel.DataAnnotations
 @using eStore.Helpers
+@inject IJSRuntime js
 @inject IJWTService JWTService
 @inject IMemberService MemberService
 @inject NavigationManager Navigation
-@inject ILocalStorageService LocalStorage
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 
 <h3>Login</h3>
-
 @if (!string.IsNullOrEmpty(ErrorMessage))
 {
     <p style="color: red">@ErrorMessage</p>
 }
+<div>
+    <label>
+        Email:
+        <input @bind="model.Email" />
+    </label>
+</div>
+<div>
+    <label>
+        Password:
+        <input type="password" @bind="model.Password" />
+    </label>
+</div>
+<div>
+    <button @onclick="HandleLogin">Submit</button>
+<button @onclick="() => Console.WriteLine('B')">Submit</button>
 
-<form method="post" @onsubmit="HandleLogin" @formname="starship-plain-form">
-    <AntiforgeryToken />
-    <div>
-        <label>
-            Identifier:
-            <InputText @bind-Value="Email" />
-        </label>
-    </div>
-    <div>
-        <label>
-            Identifier:
-            <InputText @bind-Value="Password" />
-        </label>
-    </div>
-    <div>
-        <button type="submit">Submit</button>
-    </div>
-</form>
+</div>
 
 @code {
-    @code {
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
-        [SupplyParameterFromForm]
-        private string Email { get; set; } = "nguyenanhthu@gmail.com";
+    public class Model
+    {
+        public string Email { get; set; } = "nguyenanhthu@gmail.com";
+        public string Password { get; set; } = "123456";
+    }
 
-        [Required(ErrorMessage = "Password is required.")]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
-        [SupplyParameterFromForm]
-        private string Password { get; set; } = "123456";
+    private Model model = new Model();
+    private string ErrorMessage { get; set; } = string.Empty;
 
-        private string ErrorMessage { get; set; } = string.Empty;
-        private string Token { get; set; }
-        private bool ShouldSaveToken { get; set; } = false;
-        private bool ShouldNavigate { get; set; } = false;
-        private string NavigationUrl { get; set; }
-        private async Task HandleLogin()
+    private async Task HandleLogin()
+    {
+        if (string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
         {
-            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+            ErrorMessage = "Please fill in all fields.";
+            return;
+        }
+
+        try
+        {
+            var loginResult = await MemberService.Login(model.Email, model.Password);
+            if (loginResult == null)
             {
-                ErrorMessage = "Please fill in all fields.";
+                ErrorMessage = "Invalid email or password.";
                 return;
             }
 
-            try
+            var customAuthStateProvider = AuthStateProvider as CustomAuthStateProvider;
+            if (customAuthStateProvider != null)
             {
-                var loginResult = await MemberService.Login(Email, Password);
+                await customAuthStateProvider.UpdateAuthenticationState(new UserSession
+                    {
+                        Email = model.Email,
+                        Role = "User"
+                    });
 
-                if (loginResult == null)
-                {
-                    ErrorMessage = "Invalid email or password.";
-                    return;
-                }
-
-                Token = JWTService.GenerateJwtToken(loginResult);
-                ShouldSaveToken = true;
-
+                NavigationManager.NavigateTo("/");
             }
-            catch (Exception ex)
+            else
             {
-                ErrorMessage = "An error occurred during login. Please try again.";
-                Console.WriteLine($"Login error: {ex.Message}");
+                ErrorMessage = "Authentication provider not properly configured.";
             }
         }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        catch (Exception ex)
         {
-            Console.WriteLine("OnAfterRenderAsync called");
-            if (ShouldSaveToken)
-            {
-                ShouldSaveToken = false;
-                await LocalStorage.SetItemAsync("authToken", Token);
-
-                // Update authentication state
-                if (AuthStateProvider is CustomAuthStateProvider customAuthStateProvider)
-                {
-                    await customAuthStateProvider.MarkUserAsAuthenticated(Token);
-                }
-            }
-            
+            ErrorMessage = "An error occurred during login. Please try again.";
+            Console.WriteLine($"Login error: {ex.Message}");
         }
     }
 
-}
+    // If you need token handling logic, you can uncomment and fix this section:
+    /*
+    private string Token { get; set; }
+    private bool ShouldSaveToken { get; set; }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ShouldSaveToken && !string.IsNullOrEmpty(Token))
+        {
+            ShouldSaveToken = false;
+            await js.InvokeVoidAsync("localStorage.setItem", "authToken", Token);
+
+            // Update authentication state if needed
+            if (AuthStateProvider is CustomAuthStateProvider customAuthStateProvider)
+            {
+                await customAuthStateProvider.MarkUserAsAuthenticated(Token);
+                }
+            }
+        }
+        */
+}

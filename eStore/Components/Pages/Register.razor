@@ -1,0 +1,43 @@
+﻿@page "/register"
+
+@using System.ComponentModel.DataAnnotations
+@using BusinessObject.Contracts
+@using BusinessObject.Models
+@inject IMemberService MemberService
+<h3>Register</h3>
+
+
+<form method="post" @onsubmit="HandleRegister" @formname="starship-plain-form">
+    <AntiforgeryToken />
+    <div>
+        <label>
+            Identifier:
+            <InputText @bind-Value="Member.Email" />
+        </label>
+    </div>
+    <div>
+        <label>
+            Identifier:
+            <InputText @bind-Value="Member.Password" />
+        </label>
+    </div>
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</form>
+
+@code {
+    [SupplyParameterFromForm]
+    private MemberDTO Member { get; set; } = new()
+		{
+			Email = "",
+			Password = "",
+            CompanyName = "",
+			Country = "",
+			City = ""
+		};
+    private async Task HandleRegister()
+    {
+        // await MemberService.Register(Member);
+	}
+}

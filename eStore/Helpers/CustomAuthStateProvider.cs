@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -7,57 +8,72 @@ namespace eStore.Helpers
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
-        private readonly ILocalStorageService _localStorage;
-        private readonly HttpClient _httpClient;
+        private readonly ProtectedSessionStorage _sessionStorage;
+        private ClaimsPrincipal _anomyous = new ClaimsPrincipal(new ClaimsIdentity());
 
-        public CustomAuthStateProvider(ILocalStorageService localStorage, HttpClient httpClient)
+        public CustomAuthStateProvider(ProtectedSessionStorage sessionStorage)
         {
-            _localStorage = localStorage;
-            _httpClient = httpClient;
+            _sessionStorage = sessionStorage;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var token = await _localStorage.GetItemAsync<string>("authToken");
-
-            if (string.IsNullOrEmpty(token))
+            try
             {
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                var token = await _sessionStorage.GetAsync<UserSession>("UserSession");
+                var userSession = token.Success ? token.Value : null;
+                var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, userSession.Email),
+                new Claim(ClaimTypes.Role, userSession.Role)
+            }, "CustomAuth"));
+
+                return await Task.FromResult(new AuthenticationState(claimsPrincipal));
+            }
+            catch (Exception)
+            {
+
+                return await Task.FromResult(new AuthenticationState(_anomyous));
+
             }
 
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            return new AuthenticationState(
-                new ClaimsPrincipal(
-                    new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt")));
         }
-
-        public async Task MarkUserAsAuthenticated(string token)
+        public async Task UpdateAuthenticationState(UserSession userSession)
         {
-            await _localStorage.SetItemAsync("authToken", token);
-
-            var authenticatedUser = new ClaimsPrincipal(
-                new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
-
-            var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
-            NotifyAuthenticationStateChanged(authState);
+            await _sessionStorage.SetAsync("UserSession", userSession);
+            var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, userSession.Email),
+                new Claim(ClaimTypes.Role, userSession.Role)
+            }, "CustomAuth"));
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
         }
+        //public async Task MarkUserAsAuthenticated(string token)
+        //{
+        //    await _localStorage.SetItemAsync("authToken", token);
 
-        public async Task MarkUserAsLoggedOut()
-        {
-            await _localStorage.RemoveItemAsync("authToken");
+        //    var authenticatedUser = new ClaimsPrincipal(
+        //        new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
 
-            var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
-            var authState = Task.FromResult(new AuthenticationState(anonymousUser));
-            NotifyAuthenticationStateChanged(authState);
-        }
+        //    var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
+        //    NotifyAuthenticationStateChanged(authState);
+        //}
 
-        private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(jwt);
-            return token.Claims;
-        }
+        //public async Task MarkUserAsLoggedOut()
+        //{
+        //    await _localStorage.RemoveItemAsync("authToken");
+
+        //    var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
+        //    var authState = Task.FromResult(new AuthenticationState(anonymousUser));
+        //    NotifyAuthenticationStateChanged(authState);
+        //}
+
+        //private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+        //{
+        //    var handler = new JwtSecurityTokenHandler();
+        //    var token = handler.ReadJwtToken(jwt);
+        //    return token.Claims;
+        //}
     }
 }
