@@ -13,7 +13,7 @@
 
 <h3 class="text-center mt-4">Đăng nhập</h3>
 
-<EditForm Model="@model" OnValidSubmit="HandleLogin" class="container mt-3 p-4 border rounded shadow-sm bg-light">
+<EditForm Model="@model" OnValidSubmit="HandleLogin" class="container mt-3 p-4 border rounded shadow-sm bg-light" style="width: 680px; margin: 0 auto">
     <DataAnnotationsValidator />
 
     <div class="mb-3">
@@ -35,7 +35,7 @@
 
     <div class="d-grid">
         <button type="submit" class="btn btn-primary">Đăng nhập</button>
-        <div class="align-content-center justify-content-center" style="margin: auto">
+        <div class="align-content-center justify-content-center mt-2" style="margin: auto">
             Chưa có tài khoản <a href="./register">Đăng kí</a>
         </div>
     </div>
@@ -78,22 +78,24 @@
                         Id = loginResult.MemberId,
                         Email = loginResult.Email,
                         Role = loginResult.Role,
-                        City = loginResult.City,
-                        Country = loginResult.Country
+                        City = loginResult.City ?? "",
+                        Country = loginResult.Country ?? ""
                     });
+
                 if (loginResult.Role == "Member")
                 {
+                    
+                    var cartItemCount = await CartService.GetCartItemsCount(loginResult.MemberId.ToString());
+                    if (OnCartUpdated != null && cartItemCount != null)
+                    {
+                        await OnCartUpdated((int)cartItemCount);
+                    }
                     Navigation.NavigateTo("/");
-                } else
-                {
-                    Navigation.NavigateTo("/admin");
                 }
-                var cartItemCount = await CartService.GetCartItemsCount(loginResult.MemberId.ToString());
-                if (OnCartUpdated != null && cartItemCount != null)
+                else
                 {
-                    await OnCartUpdated((int)cartItemCount);
+                    Navigation.NavigateTo("/admin/orders");
                 }
-                Navigation.NavigateTo("/");
             }
             else
             {

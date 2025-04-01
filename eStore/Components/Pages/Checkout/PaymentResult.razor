@@ -70,17 +70,16 @@ else if (ErrorMessage != null)
     private string? ErrorMessage;
     private string? NavigateToUrl;
 
+    [CascadingParameter]
+    private Func<int, Task>? OnCartUpdated { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         // create order
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        // if (!user.Identity.IsAuthenticated)
-        // {
-        //     NavigationManager.NavigateTo("/login", forceLoad: true);
-        //     return;
-        // }
+       
         var uri = new Uri(NavigationManager.Uri);
         IQueryCollection query = new QueryCollection(QueryHelpers.ParseQuery(uri.Query));
 
@@ -91,8 +90,7 @@ else if (ErrorMessage != null)
                 VnPayPaymentResult = Vnpayment.GetPaymentResult(query);
                 if (VnPayPaymentResult.IsSuccess)
                 {
-                    
-
+                   
                     var userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
                     var cart = await CartService.GetCartAsync(userId);
@@ -119,6 +117,11 @@ else if (ErrorMessage != null)
                         await OrderService.AddOrderAsync(order);
                         _cartDTO.Items.Clear();
                         await CartService.UpdateCartAsync(_cartDTO);
+
+                        if (OnCartUpdated != null)
+                        {
+                            await OnCartUpdated(_cartDTO.Items.Count);
+                        }
                     }
                 }
             }

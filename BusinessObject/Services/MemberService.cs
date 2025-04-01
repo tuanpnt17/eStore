@@ -44,11 +44,11 @@ public class MemberService : IMemberService
 
     public async Task AddMemberAsync(CreateMemberDTO memberDto)
     {
-		if (_unitOfWork.MemberRepository.CheckExistingEmail(memberDto.Email))
-		{
-			throw new Exception("Email đã tồn tại");
-		}
-		var member = _mapper.Map<Member>(memberDto);
+        if (_unitOfWork.MemberRepository.CheckExistingEmail(memberDto.Email))
+        {
+            throw new Exception("Email đã tồn tại");
+        }
+        var member = _mapper.Map<Member>(memberDto);
         await _unitOfWork.MemberRepository.InsertAsync(member);
         await _unitOfWork.Complete();
     }
@@ -155,8 +155,9 @@ public class MemberService : IMemberService
         {
             return new MemberDTO
             {
-                Email = _configuration["AdminAccount:AccountId"],
-                Password = _configuration["AdminAccount:Password"],
+                MemberId = 0,
+                Email = adminEmail,
+                Password = adminPassword,
                 Role = "Admin",
             };
         }

@@ -9,7 +9,7 @@
 
 <h3 class="text-center text-primary">Register</h3>
 
-<div class="container mt-4">
+<div class="container mt-4 " style="width: 680px; margin: 0 auto">
 	<EditForm Model="Member" OnValidSubmit="HandleRegister" class="card p-4 shadow-sm">
 		<DataAnnotationsValidator />
 		<AntiforgeryToken />
@@ -44,7 +44,7 @@
 			<ValidationMessage For="() => Member.City" class="text-danger" />
 		</div>
 
-		<div class="d-grid">
+		<div class="d-grid mt-4">
 			<button type="submit" class="btn btn-primary">Register</button>
 		</div>
 
