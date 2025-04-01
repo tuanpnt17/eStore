@@ -32,4 +32,10 @@ public class OrderService : IOrderService
     {
         await _unitOfWork.OrderRepository.UpdateOrderAsync(order);
     }
+
+    public async Task AddOrderAsync(Order order)
+    {
+        await _unitOfWork.OrderRepository.CreateOrderAsync(order);
+        await _unitOfWork.Complete();
+    }
 }

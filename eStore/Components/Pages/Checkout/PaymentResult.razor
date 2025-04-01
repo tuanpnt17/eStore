@@ -1,109 +1,142 @@
-﻿@page "/payment-result"  
-@using BusinessObject.Models  
-@using Microsoft.EntityFrameworkCore.Metadata.Internal  
-@using VNPAY.NET  
-@using Microsoft.AspNetCore.WebUtilities  
+﻿@page "/payment-result"
+@using System.Security.Claims
+@using BusinessObject.Models
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@using VNPAY.NET
+@using Microsoft.AspNetCore.WebUtilities
 @using Microsoft.Extensions.Primitives
-@inject NavigationManager NavigationManager  
-@inject IVnpay Vnpayment  
-@inject ICartService CartService  
+@inject NavigationManager NavigationManager
+@inject IVnpay Vnpayment
+@inject ICartService CartService
+@inject IOrderService OrderService
 
-@if (VnPayPaymentResult != null)  
-{  
-   <div class="container text-center mt-5">  
-       @if (VnPayPaymentResult.IsSuccess)  
-       {  
-           <h2 style="color: green">Thanh toán thành công!</h2>  
-       }  
-       else  
-       {  
-           <h2 style="color: orangered">Thanh toán thất bại!</h2>  
-       }  
-       <table class="table mt-3">  
-           <tbody>  
-               <tr>  
-                   <th>Amount</th>  
-                   <td>@_totalPrice.ToString("N0") VND</td>  
-               </tr>  
-               <tr>  
-                   <th>Payment Method</th>  
-                   <td>@VnPayPaymentResult?.PaymentMethod</td>  
-               </tr>  
-               <tr>  
-                   <th>Transaction ID</th>  
-                   <td>@VnPayPaymentResult?.VnpayTransactionId</td>  
-               </tr>  
-               <tr>  
-                   <th>Date</th>  
-                   <td>@VnPayPaymentResult?.Timestamp.ToString()</td>  
-               </tr>  
-           </tbody>  
-       </table>  
-       <button class="btn btn-primary" @onclick="HanldeNavigate">Return Home</button>  
-   </div>  
+@inject AuthenticationStateProvider AuthStateProvider
 
-}  
-else if (ErrorMessage != null)  
-{  
-   <div class="alert alert-danger">@ErrorMessage</div>  
-}  
+@if (VnPayPaymentResult != null)
+{
+    <div class="container text-center mt-5">
+        @if (VnPayPaymentResult.IsSuccess)
+        {
+            <h2 style="color: green">Thanh toán thành công!</h2>
+        }
+        else
+        {
+            <h2 style="color: orangered">Thanh toán thất bại!</h2>
+        }
+        <table class="table mt-3">
+            <tbody>
+                <tr>
+                    <th>Amount</th>
+                    <td>@_totalPrice.ToString("N0") VND</td>
+                </tr>
+                <tr>
+                    <th>Payment Method</th>
+                    <td>@VnPayPaymentResult?.PaymentMethod</td>
+                </tr>
+                <tr>
+                    <th>Transaction ID</th>
+                    <td>@VnPayPaymentResult?.VnpayTransactionId</td>
+                </tr>
+                <tr>
+                    <th>Date</th>
+                    <td>@VnPayPaymentResult?.Timestamp.ToString()</td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-primary" @onclick="HanldeNavigate">Return Home</button>
+    </div>
 
-<style>  
-   .container {  
-       max-width: 600px;  
-       margin: auto;  
-       padding: 20px;  
-       border: 1px solid #ccc;  
-       border-radius: 10px;  
-       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  
-       background: #fff;  
-   }  
-</style>  
+}
+else if (ErrorMessage != null)
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
 
-@code {  
-   private VNPAY.NET.Models.PaymentResult? VnPayPaymentResult;  
-   private CartDTO? _cartDTO;  
-   private decimal _totalPrice;  
-   private string? ErrorMessage;  
-   private string? NavigateToUrl;  
+<style>
+    .container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    }
+</style>
 
-   protected override async Task OnInitializedAsync()  
-   {  
-       var uri = new Uri(NavigationManager.Uri);  
-       IQueryCollection query = new QueryCollection(QueryHelpers.ParseQuery(uri.Query));   
+@code {
+    private VNPAY.NET.Models.PaymentResult? VnPayPaymentResult;
+    private CartDTO? _cartDTO;
+    private decimal _totalPrice;
+    private string? ErrorMessage;
+    private string? NavigateToUrl;
 
-       if (!string.IsNullOrEmpty(uri.Query))  
-       {  
-           try  
-           {  
-               VnPayPaymentResult = Vnpayment.GetPaymentResult(query);  
-               if (VnPayPaymentResult.IsSuccess)  
-               {  
-                   // create order  
-                   var cart = await CartService.GetCartAsync("1");  
-                   if (cart != null)  
-                   {  
-                       _cartDTO = cart;  
-                       _totalPrice = _cartDTO.Items.Sum(i => i.Price * i.Quantity * ((decimal)(100 - i.Discount) / 100));  
-                       // new order from cart  
-                       // save order to db  
-                       // remove cart items  
-                   }  
-               }  
-           }  
-           catch (Exception ex)  
-           {  
-               ErrorMessage = ex.Message;  
-           }  
-       }  
-       else  
-       {  
-           NavigationManager.NavigateTo("/");  
-       }  
-   }  
+    protected override async Task OnInitializedAsync()
+    {
+        // create order
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
-   private void HanldeNavigate()  
-   {  
-       NavigationManager.NavigateTo("/");  
-   }  
+        if (!user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+        var uri = new Uri(NavigationManager.Uri);
+        IQueryCollection query = new QueryCollection(QueryHelpers.ParseQuery(uri.Query));
+
+        if (!string.IsNullOrEmpty(uri.Query))
+        {
+            try
+            {
+                VnPayPaymentResult = Vnpayment.GetPaymentResult(query);
+                if (VnPayPaymentResult.IsSuccess)
+                {
+                    
+
+                    var userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                    var cart = await CartService.GetCartAsync(userId);
+                    if (cart != null)
+                    {
+                        _cartDTO = cart;
+                        _totalPrice = _cartDTO.Items.Sum(i => i.Price * i.Quantity * ((decimal)(100 - i.Discount) / 100));
+                        // new order from cart
+                        var order = new Order()
+                            {
+                                MemberId = 1,
+                                Freight = _totalPrice,
+                                OrderDate = VnPayPaymentResult.Timestamp,
+                                RequiredDate = VnPayPaymentResult.Timestamp.AddDays(3),
+                                ShippedDate = VnPayPaymentResult.Timestamp.AddDays(3),
+                                OrderDetails = _cartDTO.Items.Select(x => new OrderDetail
+                                {
+                                    ProductId = x.Id,
+                                    UnitPrice = x.Price,
+                                    Quantity = x.Quantity,
+                                    Discount = x.Discount
+                                }).ToList()
+                            };
+                        await OrderService.AddOrderAsync(order);
+                        _cartDTO.Items.Clear();
+                        await CartService.UpdateCartAsync(_cartDTO);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private void HanldeNavigate()
+    {
+        NavigationManager.NavigateTo("/");
+    }
 }

@@ -1,6 +1,8 @@
 ﻿@page "/detail/{ProductId:int}"
+@using System.Security.Claims
 @using BusinessObject.Contracts
 @using BusinessObject.Models
+@using Microsoft.AspNetCore.Components.Authorization
 @using static BusinessObject.Models.ProductDTO
 
 @inject IProductService ProductService
@@ -8,6 +10,7 @@
 @inject ICartService CartService
 @inject IMapper Mapper
 @inject SweetAlertService Swal;
+@inject AuthenticationStateProvider AuthStateProvider
 @layout CommonLayout
 
 @rendermode InteractiveServer
@@ -121,60 +124,60 @@
 
 <style>
     .quantity-control {
-        display: flex;
-        align-items: center;
-        max-width: 180px;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    max-width: 180px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .quantity-btn {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f8f9fa;
-        border: none;
-        font-size: 1.5rem;
-        transition: all 0.2s ease;
-        padding: 0;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    border: none;
+    font-size: 1.5rem;
+    transition: all 0.2s ease;
+    padding: 0;
     }
 
-        .quantity-btn:hover {
-            background-color: #e9ecef;
-        }
+    .quantity-btn:hover {
+    background-color: #e9ecef;
+    }
 
     .quantity-input {
-        width: 80px;
-        height: 50px;
-        border: none;
-        border-left: 1px solid #dee2e6;
-        border-right: 1px solid #dee2e6;
-        border-radius: 0;
-        font-size: 1.25rem;
-        font-weight: bold;
-        padding-left: 1px;
-        padding-right: 1px;
+    width: 80px;
+    height: 50px;
+    border: none;
+    border-left: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    border-radius: 0;
+    font-size: 1.25rem;
+    font-weight: bold;
+    padding-left: 1px;
+    padding-right: 1px;
     }
 
-        .quantity-input:focus {
-            box-shadow: none;
-            outline: none;
-        }
+    .quantity-input:focus {
+    box-shadow: none;
+    outline: none;
+    }
 
 
-        .quantity-input::-webkit-outer-spin-button,
-        .quantity-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+    .quantity-input::-webkit-outer-spin-button,
+    .quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    }
 
-        .quantity-input[type=number] {
-            -moz-appearance: textfield;
-        }
+    .quantity-input[type=number] {
+    -moz-appearance: textfield;
+    }
 
     }
 </style>
@@ -217,15 +220,25 @@
 
     private async Task AddToCart()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (!user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+
+        var userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
         if (product != null && quantity <= product.UnitsInStock)
         {
-            var cart = await CartService.GetCartAsync("1"); // Get cart by user id
+            var cart = await CartService.GetCartAsync(userId);
             if (cart == null)
             {
                 cart = new CartDTO
                     {
-                        Id = "1",
+                        Id = userId,
                         Items = new List<CartItemDTO>()
                     };
                 await CartService.UpdateCartAsync(cart);
@@ -287,12 +300,59 @@
     {
         if (product != null && quantity <= product.UnitsInStock)
         {
-            // Logic add to cart cho Tuấn
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (!user.Identity.IsAuthenticated)
+            {
+                NavigationManager.NavigateTo("/login", forceLoad: true);
+                return;
+            }
+
+            var userId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            var cart = await CartService.GetCartAsync(userId);
+            if (cart == null)
+            {
+                cart = new CartDTO
+                {
+                    Id = userId,
+                    Items = new List<CartItemDTO>()
+                };
+                await CartService.UpdateCartAsync(cart);
+            }
+
+            var cartItem = cart.Items.FirstOrDefault(i => i.Id == product.ProductId);
+            if (cartItem == null)
+            {
+                cartItem = new CartItemDTO
+                {
+                    Id = product.ProductId,
+                    Quantity = quantity,
+                    Price = product.UnitPrice,
+                    Discount = 20,
+                    ProductName = product.ProductName,
+                    Category = product.CategoryName,
+                    UnitsInStock = product.UnitsInStock
+                };
+                cart.Items.Add(cartItem);
+            }
+            else
+            {
+                cartItem.Quantity += quantity;
+            }
+
+            var updatedCart = await CartService.UpdateCartAsync(cart);
+            if (updatedCart != null && OnCartUpdated != null)
+            {
+                await OnCartUpdated(updatedCart.Items.Count);
+            }
+
+            NavigationManager.NavigateTo("/cart");
         }
         else
         {
             //logic không được mua
-
             await Swal.FireAsync("Oops...", "Sản phẩm đã hết hàng!", "error");
         }
     }

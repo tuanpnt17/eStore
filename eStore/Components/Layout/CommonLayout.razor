@@ -1,4 +1,5 @@
-﻿@using BlazorBootstrap
+﻿@using System.Security.Claims
+@using BlazorBootstrap
 @using Microsoft.AspNetCore.Components.Authorization
 @using eStore.Helpers
 @inherits LayoutComponentBase
@@ -71,7 +72,15 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		_cartItemCount = await CartService.GetCartItemsCount("1") ?? 0;
+		// create order
+		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (user.Identity.IsAuthenticated)
+		{
+			var cartId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value!;
+			_cartItemCount = await CartService.GetCartItemsCount(cartId) ?? 0;
+		}
 	}
 
 	private async Task OnCartUpdated(int newCount)

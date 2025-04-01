@@ -9,6 +9,7 @@
 @inject IMemberService MemberService
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
+@inject ICartService CartService
 
 <h3 class="text-center mt-4">Đăng nhập</h3>
 
@@ -55,6 +56,9 @@
     private Model model = new Model();
     private string ErrorMessage { get; set; } = string.Empty;
 
+    [CascadingParameter]
+    private Func<int, Task>? OnCartUpdated { get; set; }
+
     private async Task HandleLogin()
     {
         ErrorMessage = string.Empty; // Reset error message
@@ -78,6 +82,11 @@
                         City = loginResult.City,
                         Country = loginResult.Country
                     });
+                var cartItemCount = await CartService.GetCartItemsCount(loginResult.MemberId.ToString());
+                if (OnCartUpdated != null && cartItemCount != null)
+                {
+                    await OnCartUpdated((int)cartItemCount);
+                }
                 Navigation.NavigateTo("/");
             }
             else

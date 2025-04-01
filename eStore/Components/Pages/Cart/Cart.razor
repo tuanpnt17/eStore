@@ -1,15 +1,15 @@
 ﻿@page "/cart"
+@using System.Security.Claims
 @using BusinessObject.Models
-@using Microsoft.EntityFrameworkCore
+@using BusinessObject.Services
 @using DataAccess.Entities
-@using DataAccess.Data
-@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@using Microsoft.AspNetCore.Components.Authorization
 
 @inject ICartService CartService
 @inject IMapper Mapper
-@inject SweetAlertService Swal;
+@inject SweetAlertService Swal
 @inject NavigationManager NavigationManager
-
+@inject AuthenticationStateProvider AuthStateProvider
 <PageTitle>Giỏ hàng</PageTitle>
 
 <h1>Giỏ hàng</h1>
@@ -90,14 +90,24 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadCart();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            var memberIdClaim = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(memberIdClaim, out int memberId))
+            {
+                await LoadCart(memberId.ToString());
+            }
+        }
     }
 
-    private async Task LoadCart()
+    private async Task LoadCart(string cartId)
     {
-        var serverCart = await CartService.GetCartAsync("1") ?? new CartDTO()
+        var serverCart = await CartService.GetCartAsync(cartId) ?? new CartDTO()
             {
-                Id = "1"
+                Id = cartId
             };
         _cartDto = serverCart;
         CalculateTotalPrice();
