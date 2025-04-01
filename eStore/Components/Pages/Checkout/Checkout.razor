@@ -1,0 +1,98 @@
+﻿@page "/checkout"
+@using BusinessObject.Models
+@using Microsoft.EntityFrameworkCore
+@using DataAccess.Entities
+@using DataAccess.Data
+@using eStore.ViewModels
+@inject ICartService CartService
+@inject SweetAlertService Swal
+@inject NavigationManager NavigationManager
+
+<PageTitle>Thanh toán</PageTitle>
+
+<h1 class="text-warning">THANH TOÁN</h1>
+@if(_cartDto != null && _cartDto.Items.Any())
+{
+    <div class="row">
+        <!-- Thông tin khách hàng -->
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h5 class="card-header">THÔNG TIN KHÁCH HÀNG</h5>
+                <div class="card-body">
+                    <input type="text" class="form-control mb-2" placeholder="Họ và tên" @bind="customerInfo.FullName" />
+                    <input type="text" class="form-control mb-2" placeholder="Điện thoại" @bind="customerInfo.Phone" />
+                    <select class="form-control mb-2" @bind="customerInfo.City">
+                        <option>Chọn tỉnh/thành phố</option>
+                        <option value="Hà Nội">Hà Nội</option>
+                        <option value="TP Hồ Chí Minh">TP Hồ Chí Minh</option>
+                    </select>
+                    <input type="text" class="form-control mb-2" placeholder="Địa chỉ" @bind="customerInfo.Address" />
+                    <input type="email" class="form-control mb-2" placeholder="Email" @bind="customerInfo.Email" />
+                    <textarea class="form-control" placeholder="Nội dung" @bind="customerInfo.Note"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Xác nhận đơn hàng -->
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h5 class="card-header">XÁC NHẬN ĐƠN HÀNG</h5>
+                <div class="card-body">
+                    @foreach (var item in _cartDto.Items)
+                    {
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>@item.ProductName</strong>
+                                <p>@item.Quantity x @item.Price.ToString("N0")Đ</p>
+                            </div>
+                        </div>
+                        <hr />
+                    }
+                    <h5 class="text-danger">Tổng cộng: <strong>@_totalPrice.ToString("N0") VND</strong></h5>
+                    <button class="btn btn-warning w-100 mt-3" @onclick="PlaceOrder">HOÀN TẤT ĐẶT HÀNG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@code {
+    private CartDTO _cartDto;
+    private decimal _totalPrice = 0;
+    private string paymentMethod = "COD";
+    private CustomerInfo customerInfo = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var serverCart = await CartService.GetCartAsync("1");
+        if (serverCart == null)
+        {
+            NavigationManager.NavigateTo("/cart");
+            return;
+        }
+        _cartDto = serverCart;
+        _totalPrice = _cartDto.Items.Sum(i => i.Price * i.Quantity * ((decimal)(100 - i.Discount) / 100));
+    }
+
+    private async Task PlaceOrder()
+    {
+        if (string.IsNullOrWhiteSpace(customerInfo.FullName) || string.IsNullOrWhiteSpace(customerInfo.Phone))
+        {
+            await Swal.FireAsync("Lỗi", "Vui lòng nhập đầy đủ thông tin!", "error");
+            return;
+        }
+
+        await Swal.FireAsync("Thành công", "Đơn hàng của bạn đã được đặt!", "success");
+    }
+
+    private class CustomerInfo
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Note { get; set; } = string.Empty;
+    }
+}

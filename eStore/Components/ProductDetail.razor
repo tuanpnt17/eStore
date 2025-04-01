@@ -1,4 +1,4 @@
-﻿@page "/productsList/detail/{ProductId:int}"
+﻿@page "/detail/{ProductId:int}"
 @using BusinessObject.Contracts
 @using BusinessObject.Models
 @using static BusinessObject.Models.ProductDTO
@@ -31,7 +31,7 @@
             <div class="col-12 col-lg-10">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/productsList">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
                         <li class="breadcrumb-item active" aria-current="page">@product.ProductName</li>
                     </ol>
                 </nav>
@@ -274,7 +274,7 @@
 
             else if (result.IsDismissed)
             {
-                NavigationManager.NavigateTo("/ProductsList");
+                NavigationManager.NavigateTo("/");
             }
         }
         else

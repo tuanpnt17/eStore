@@ -35,7 +35,7 @@
                         <div class="d-flex">
                             <div>
                                 <strong>@item.ProductName</strong>
-                                <p class="mb-1">Giá: @item.Price.ToString("N0") vnđ</p>
+                                <p class="mb-1">Giá: @item.Price.ToString("N0") VND</p>
                                 <a @onclick="() => RemoveFromCart(item.Id)" class="text-danger"><i class="bi bi-trash"></i> Xóa</a>
                             </div>
                         </div>
@@ -58,8 +58,8 @@
                         var actualSubTotalPriceFormat = actualSubTotalPrice.ToString("N0");
                     }
                     <td class="text-center">
-                        <div style="text-decoration: line-through">@(subTotalPriceFormat) vnđ</div>
-                        <div class="text-primary">@(actualSubTotalPriceFormat) vnđ</div>
+                        <div style="text-decoration: line-through">@(subTotalPriceFormat) VND</div>
+                        <div class="text-primary">@(actualSubTotalPriceFormat) VND</div>
                     </td>
                 </tr>
             }
@@ -72,17 +72,22 @@
 </table>
 
 <div class="d-flex justify-content-between align-items-center mt-3">
-    <h5 class="text-danger">Tổng cộng: <strong>@_totalPrice.ToString("N0") vnđ</strong></h5>
+    <h5 class="text-danger">Tổng cộng: <strong>@_totalPrice.ToString("N0") VND</strong></h5>
     <div>
-        <button @onclick="NavigateToHome" class="btn btn-warning">MUA THÊM</button>
-        <button @onclick="RemoveAllCart" class="btn btn-warning">XÓA TẤT CẢ</button>
-        <button class="btn btn-warning">ĐẶT HÀNG</button>
+        <button @onclick="NavigateToHome" class="btn btn-warning ms-lg-2">MUA THÊM</button>
+        @if (_cartDto != null && _cartDto.Items.Any()) {
+            <button @onclick="RemoveAllCart" class="btn btn-warning ms-lg-2">XÓA TẤT CẢ</button>
+            <button @onclick="NavigateToCheckout" class="btn btn-warning ms-lg-2">ĐẶT HÀNG</button>
+        }
     </div>
 </div>
 
 @code {
     private CartDTO _cartDto;
     private decimal _totalPrice = 0;
+
+    [CascadingParameter]
+    private Func<int, Task>? OnCartUpdated { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -110,6 +115,10 @@
         if (cartItem == null) return;
         _cartDto.Items.Remove(cartItem);
         await CartService.UpdateCartAsync(_cartDto);
+        if (OnCartUpdated != null)
+        {
+            await OnCartUpdated(_cartDto.Items.Count);
+        }
         CalculateTotalPrice();
         StateHasChanged();
     }
@@ -169,15 +178,24 @@
 
     private void NavigateToHome()
     {
-        NavigationManager.NavigateTo("/productsList");
+        NavigationManager.NavigateTo("/");
     }
 
     private async Task RemoveAllCart()
     {
         _cartDto.Items.Clear();
         await CartService.UpdateCartAsync(_cartDto);
+        if (OnCartUpdated != null)
+        {
+            await OnCartUpdated(_cartDto.Items.Count);
+        }
         CalculateTotalPrice();
         StateHasChanged();
+    }
+
+    private void NavigateToCheckout()
+    {
+        NavigationManager.NavigateTo("/checkout");
     }
 
 }

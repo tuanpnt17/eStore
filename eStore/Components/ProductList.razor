@@ -1,4 +1,4 @@
-﻿@page "/productsList/{Page:int?}"
+﻿@page "/{Page:int?}"
 @using BusinessObject.Contracts
 @using static BusinessObject.Models.ProductDTO
 
@@ -26,7 +26,7 @@ else
                         <h5 class="card-title">@product.ProductName</h5>
                         <p class="card-text">Giá: @product.UnitPrice.ToString("N0")VND</p>
                         <p class="card-text">Trọng lượng: @product.Weight</p>
-                        <a href="@($"/productsList/detail/{product.ProductId}")" class="btn btn-primary mt-auto">Xem chi tiết</a>
+                        <a href="@($"/detail/{product.ProductId}")" class="btn btn-primary mt-auto">Xem chi tiết</a>
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@ else
             @for (int i = 1; i <= totalPages; i++)
             {
                 <li class="page-item @(i == currentPage ? "active" : "")">
-                    <a class="page-link" href="@($"/productsList/{i}")">@i</a>
+                    <a class="page-link" href="@($"/{i}")">@i</a>
                 </li>
             }
         </ul>
