@@ -13,10 +13,10 @@ public class OrderDetail
     public int ProductId { get; set; }
 
     [Required, Column(TypeName = "money")]
-    public decimal UnitPrice { get; set; }
+	public decimal UnitPrice { get; set; }
 
     [Required]
-    public int Quantity { get; set; }
+	public int Quantity { get; set; }
 
     public float Discount { get; set; }
 

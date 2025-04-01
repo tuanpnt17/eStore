@@ -3,6 +3,7 @@ using BusinessObject.Services;
 using DataAccess.Interfaces;
 using DataAccess.Repositories;
 using eStore.Components;
+using eStore.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,16 +12,17 @@ var services = builder.Services;
 var configuration = builder.Configuration;
 services.AddRazorComponents().AddInteractiveServerComponents();
 
-services.AddDbContextFactory<AppDbContext>(options =>
+services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
 );
-services.AddAutoMapper(typeof(AppDomain));
+services.AddAutoMapper(typeof(MappingProfile));
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 services.AddScoped<IProductRepository, ProductRepository>();
 services.AddScoped<IOrderRepository, OrderRepository>();
 services.AddScoped<ICategoryRepository, CategoryRepository>();
 services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 services.AddScoped<IMemberRepository, MemberRepository>();
+services.AddScoped<IMemberService, MemberService>();
 services.AddScoped<IProductService, ProductService>();
 services.AddScoped<IOrderService, OrderService>();
 services.AddScoped<ICategoryService, CategoryService>();
@@ -51,7 +53,8 @@ app.UseAntiforgery();
 
 //app.MapBlazorHub();
 app.MapHub<OrderHub>(OrderHub.HubUrl);
-
+app.MapHub<ProductHub>("/producthub");
+app.MapHub<MemberHub>("/memberhub");
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 using var scope = app.Services.CreateScope();
