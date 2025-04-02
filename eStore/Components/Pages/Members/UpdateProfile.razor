@@ -9,7 +9,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject SweetAlertService Swal;
 
-<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+<Microsoft.AspNetCore.Components.Authorization.AuthorizeView Roles="Member">
     <Authorized>
         <h3>Trang cá nhân</h3>
         @if (Member is null)
@@ -68,7 +68,7 @@
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
+        if (user.Identity.IsAuthenticated && user.FindFirst(c => c.Type == ClaimTypes.Role)?.Value == "Member")
         {
             var memberIdClaim = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (int.TryParse(memberIdClaim, out int memberId))
@@ -76,8 +76,12 @@
                 MemberId = memberId;
                 Member = await MemberService.GetMember(MemberId);
             }
+        } else
+        {
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+            return;
         }
-        
+
     }
 
     private async Task UpdateMemeber()
@@ -85,7 +89,17 @@
         try
         {
             await MemberService.UpdateProfile(Member);
-
+            if (AuthStateProvider is CustomAuthStateProvider customAuthStateProvider)
+            {
+                await customAuthStateProvider.UpdateAuthenticationState(new UserSession
+                    {
+                        Id = Member.MemberId,
+                        Email = Member.Email,
+                        Role = "Member",
+                        City = Member.City,
+                        Country = Member.Country
+                    });
+            }
             var result = await Swal.FireAsync(new SweetAlertOptions
                 {
                     Title = "Thành công",
@@ -94,21 +108,11 @@
                     ShowCancelButton = true,
                     ConfirmButtonText = "Ok",
                 });
-            if (AuthStateProvider is CustomAuthStateProvider customAuthStateProvider)
-            {
-                await customAuthStateProvider.UpdateAuthenticationState(new UserSession
-                    {
-                        Id = Member.MemberId,
-                        Email = Member.Email,
-                        Role = Member.Role,
-                        City = Member.City,
-                        Country = Member.Country
-                    });
-            }
+            
                 
             if (result.IsConfirmed)
             {
-                NavigationManager.NavigateTo("./Members/Edit");
+                NavigationManager.NavigateTo("/update-profile");
             }
         }
         catch (Exception)
