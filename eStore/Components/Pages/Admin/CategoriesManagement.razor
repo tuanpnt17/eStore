@@ -7,14 +7,15 @@
 @inject NavigationManager Navigation
 @inject ICategoryService CategoryService
 @inject IJSRuntime JSRuntime
+@inject ILogger<CategoriesManagement> Logger
 @rendermode InteractiveServer
 @inherits LayoutComponentBase
 @inject IHubContext<CategoryHub> CategoryHubContext
 <h3>Quản lý danh mục</h3>
 <style>
     .table-striped tbody tr.selected-row {
-        background-color: rgba(0, 0, 255, 0.3) !important; /* Blue background with 30% opacity */
-        /* Removed pointer-events: none since we want the row to remain interactive */
+    background-color: rgba(0, 0, 255, 0.3) !important; /* Blue background with 30% opacity */
+    /* Removed pointer-events: none since we want the row to remain interactive */
     }
 
 </style>
@@ -42,7 +43,7 @@
                 <td>@category.CategoryName</td>
                 <td>@category.CategoryDescription</td>
                 <td>
-                    <button class="btn btn-primary btn-sm" @onclick="() => EditCategory(category)">Chỉnh sửa</button>
+                    <button class="btn btn-primary btn-sm" @onclick="() => EditCategory(category.CategoryId)">Chỉnh sửa</button>
                     <button class="btn btn-danger btn-sm" @onclick="() => DeleteCategory(category.CategoryId)">Xoá</button>
                 </td>
             </tr>
@@ -101,18 +102,24 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@(isEdit ? "Edit" : "Add") danh mục</h5>
-                    <button type="button" class="btn-close" @onclick="ClosePopup"></button>
+                    <h5 class="modal-title">@(isEdit ? "Chỉnh sửa" : "Tạo") danh mục</h5>
+                    <button type="button" class="close" aria-label="Close" @onclick="ClosePopup">
+                        <span aria-hidden="true">×</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                    <label>Category Name:</label>
-                    <input type="text" class="form-control" @bind-value="SelectedCategory.CategoryName" />
-                    @if (!string.IsNullOrEmpty(CategoryNameError))
-                    {
-                        <small class="text-danger">@CategoryNameError</small>
-                    }
-                    <label>Description:</label>
-                    <textarea class="form-control" @bind="SelectedCategory.CategoryDescription"></textarea>
+                    <div class="mb-3">
+                        <label>Category Name:</label>
+                        <input type="text" class="form-control" @bind-value="SelectedCategory.CategoryName" />
+                        @if (!string.IsNullOrEmpty(CategoryNameError))
+                        {
+                            <small class="text-danger">@CategoryNameError</small>
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label>Description:</label>
+                        <textarea class="form-control" @bind="SelectedCategory.CategoryDescription"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick="ClosePopup">Huỷ</button>
@@ -121,6 +128,7 @@
             </div>
         </div>
     </div>
+    <div class="modal-backdrop fade show"></div>
 }
 
 @code {
@@ -149,7 +157,12 @@
                 .Build();
             hubConnection.On("ReceiveCategoryUpdate", async () =>
             {
-                await InvokeAsync(async () => await LoadCategoriesAsync());
+                Logger.LogInformation("Receive Category Update success fully");
+                await InvokeAsync(async () =>
+                {
+                    await LoadCategoriesAsync();
+                    UpdatePagedCategories();
+                });
                 StateHasChanged();
             });
 
@@ -204,14 +217,13 @@
         editingCategoryId = null;
         showPopup = true;
     }
-    private void EditCategory(Category category)
+    private async Task EditCategory(int categoryId)
     {
-        if (category == null) return;
-        SelectedCategory = category;
-        originalCategoryName = category.CategoryName;
+        SelectedCategory = await CategoryService.GetCategoryByIdAsync(categoryId);
+        originalCategoryName = SelectedCategory.CategoryName;
         isEdit = true;
         showPopup = true;
-        editingCategoryId = category.CategoryId;
+        editingCategoryId = SelectedCategory.CategoryId;
         CategoryNameError = "";
         StateHasChanged();
     }
@@ -259,7 +271,7 @@
             if (isEdit)
             {
                 await CategoryService.UpdateCategoryAsync(SelectedCategory);
-                await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
+                // await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
             }
             else
             {
@@ -268,13 +280,12 @@
                         CategoryName = SelectedCategory.CategoryName,
                         CategoryDescription = SelectedCategory.CategoryDescription ?? ""
                     });
-                if (hubConnection?.State == HubConnectionState.Connected)
-                    await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
+                // await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
 
             }
+            await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
             editingCategoryId = null;
             showPopup = false;
-            StateHasChanged();
         }
         catch (Exception ex)
         {
