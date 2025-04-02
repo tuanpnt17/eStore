@@ -93,19 +93,22 @@ app.MapHub<MemberHub>("/memberhub");
 app.MapHub<CategoryHub>(CategoryHub.HubUrl);
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
-using var scope = app.Services.CreateScope();
-var serviceProvider = scope.ServiceProvider;
-var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
-try
+if (app.Environment.IsDevelopment())
 {
-    var context = serviceProvider.GetRequiredService<AppDbContext>();
-    await context.Database.MigrateAsync();
-    await AppDbContextSeed.SeedAsync(context, loggerFactory); //seed data from json
-}
-catch (Exception ex)
-{
-    var logger = loggerFactory.CreateLogger<Program>();
-    logger.LogError(ex, "An error occurred during migration");
+    using var scope = app.Services.CreateScope();
+    var serviceProvider = scope.ServiceProvider;
+    var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+    try
+    {
+        var context = serviceProvider.GetRequiredService<AppDbContext>();
+        await context.Database.MigrateAsync();
+        await AppDbContextSeed.SeedAsync(context, loggerFactory); //seed data from json
+    }
+    catch (Exception ex)
+    {
+        var logger = loggerFactory.CreateLogger<Program>();
+        logger.LogError(ex, "An error occurred during migration");
+    }
 }
 
 app.Run();
