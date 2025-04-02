@@ -6,6 +6,7 @@ namespace BusinessObject.Contracts;
 public interface ICategoryService 
 {
     Task<List<Category>> GetAllCategoriesAsync();
+    Task<Category> GetCategoryByIdAsync(int id);
     Task DeleteCategoryAsync(int cateId);
     Task CreateCategoryAsync(CategoryDTO category);
     Task UpdateCategoryAsync(Category model);

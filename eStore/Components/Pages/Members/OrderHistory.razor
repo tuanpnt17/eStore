@@ -22,19 +22,20 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Order Date</th>
-                <th>Required Date</th>
-                <th>Shipped Date</th>
-                <th>Total</th>
+                <th>Ngày đặt hàng</th>
+                <th>Ngày yêu cầu</th>
+                <th>Ngày giao hàng</th>
+                <th>Tổng cộng</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var order in PagedOrders)
             {
                 <tr @onclick="() => ViewOrderDetails(order.OrderId)" style="cursor: pointer;">
-                    <td>@order.OrderDate.ToString()</td>
-                    <td>@order.RequiredDate?.ToString()</td>
-                    <td>@order.ShippedDate?.ToString()</td>
+                    <td>@order.OrderDate.ToShortDateString()</td>
+                    <td>@order.RequiredDate?.ToShortDateString()</td>
+                    <td>@order.ShippedDate?.ToShortDateString()</td>
+
                     <td>@order.Freight?.ToString("N0") VND</td>
                 </tr>
             }
@@ -93,17 +94,18 @@ else
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Order Details (Order ID: @SelectedOrderId)</h5>
+                    <h5 class="modal-title">Chi tiết đơn hàng</h5>
                     <button type="button" class="btn-close" @onclick="ClosePopup"></button>
                 </div>
                 <div class="modal-body">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>Total</th>
+                                <th>Sản Phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Giá</th>
+                                <th>Giảm giá</th>
+                                <th>Tổng</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,8 +114,19 @@ else
                                 <tr>
                                     <td>@detail.Product.ProductName</td>
                                     <td>@detail.Quantity</td>
-                                    <td>@detail.UnitPrice</td>
-                                    <td>@(detail.Quantity * detail.UnitPrice)</td>
+                                    <td>@detail.UnitPrice.ToString("N0") VND</td>
+                                    <td>@detail.Discount%</td>
+                                    @{
+                                        var subTotalPrice = detail.UnitPrice * (decimal)detail.Quantity;
+                                        var subTotalPriceFormat = subTotalPrice.ToString("N0");
+                                        var actualSubTotalPrice = detail.UnitPrice * detail.Quantity * ((decimal)(100 - detail.Discount) / 100);
+                                        var actualSubTotalPriceFormat = actualSubTotalPrice.ToString("N0");
+                                    }
+                                    @* <td>@(detail.Quantity * detail.UnitPrice)</td> *@
+                                    <td class="text-center">
+                                        <div style="text-decoration: line-through">@(subTotalPriceFormat) VND</div>
+                                        <div class="text-primary">@(actualSubTotalPriceFormat) VND</div>
+                                    </td>
                                 </tr>
                             }
                         </tbody>

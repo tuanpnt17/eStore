@@ -15,6 +15,12 @@ public class CategoryService : ICategoryService
         _unitOfWork = unitOfWork;
     }
 
+    public async Task<Category> GetCategoryByIdAsync(int id)
+    {
+        return (await _unitOfWork.CategoryRepository.GetByIdAsync(id))
+            ?? throw new InvalidOperationException($"Danh mục với ID {id} không tồn tại!");
+    }
+
     public async Task CreateCategoryAsync(CategoryDTO category)
     {
         var model = new Category()
@@ -30,14 +36,15 @@ public class CategoryService : ICategoryService
         await _unitOfWork.CategoryRepository.DeleteCategoryAsync(cateId);
     }
 
-    public Task<List<Category>> GetAllCategoriesAsync()
+    public async Task<List<Category>> GetAllCategoriesAsync()
     {
-        return _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
+        return await _unitOfWork.CategoryRepository.GetAllCategoriesAsync();
     }
 
     public async Task UpdateCategoryAsync(Category model)
     {
        await _unitOfWork.CategoryRepository.UpdateCategoryAsync(model);
+       await _unitOfWork.Complete();
     }
     public async Task<bool> IsCategoryInUseAsync(int categoryId)
     {

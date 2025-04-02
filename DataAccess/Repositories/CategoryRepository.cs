@@ -26,13 +26,12 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
 
     public async Task<List<Category>> GetAllCategoriesAsync()
     {
-        return await context.Categories.ToListAsync();
+        return await context.Categories.AsNoTracking().ToListAsync();
     }
 
-    public async Task UpdateCategoryAsync(Category model)
+    public Task UpdateCategoryAsync(Category model)
     {
-        context.Categories.Update(model);
-        await context.SaveChangesAsync();
+		return Task.FromResult(context.Categories.Update(model));
     }
 
     public async Task<bool> IsCategoryInUseAsync(int categoryId)
