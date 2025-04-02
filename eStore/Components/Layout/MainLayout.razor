@@ -1,21 +1,22 @@
 ﻿@using BlazorBootstrap
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @using eStore.Helpers
 @inherits LayoutComponentBase
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-	
-    
-    <main>
+	<div class="sidebar">
+		<NavMenu />
+	</div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+
+	<main>
+
+		<article class="content px-4">
+			@Body
+		</article>
+	</main>
 	<div class="justify-content-end" id="navbarNav">
 		<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
 			<Authorized>
@@ -26,13 +27,7 @@
 						</a>
 					</DropdownToggleButton>
 					<DropdownMenu Position="DropdownMenuPosition.End">
-						<DropdownItem To="#" Type="DropdownItemType.Link"><span class="dropdown-item-text">Hello, @context.User.Identity.Name</span></DropdownItem>
-						<DropdownItem To="#" Type="DropdownItemType.Link">
-							<span class="dropdown-item-text">
-								<a href="./members/edit" style="    color: black;
-    text-decoration: none">Thông tin cá nhân</a>
-							</span>
-						</DropdownItem>
+						<DropdownItem><span class="dropdown-item-text">Hello, @context.User.Identity.Name</span></DropdownItem>
 						<DropdownItem To="#" Type="DropdownItemType.Link"><a class="dropdown-item" href="#" @onclick="Logout">Logout</a></DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
@@ -45,18 +40,29 @@
 </div>
 
 <div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+	An unhandled error has occurred.
+	<a href="" class="reload">Reload</a>
+	<a class="dismiss">🗙</a>
 </div>
 @code {
-    private async Task Logout()
-    {
-        if (AuthStateProvider is CustomAuthStateProvider customState)
-        {
-            await customState.UpdateAuthenticationState(null);
-        }
+	private async Task Logout()
+	{
+		if (AuthStateProvider is CustomAuthStateProvider customState)
+		{
+			await customState.UpdateAuthenticationState(null);
+		}
 
-        NavigationManager.NavigateTo("/login", forceLoad: true);
-    }
+		NavigationManager.NavigateTo("/login", forceLoad: true);
+	}
+	protected override async Task OnParametersSetAsync()
+	{
+		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (!user.Identity.IsAuthenticated || user.FindFirst(c => c.Type == ClaimTypes.Role)?.Value == "Member")
+		{
+			NavigationManager.NavigateTo("/", forceLoad: true);
+			return;
+		}
+	}
 }

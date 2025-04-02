@@ -35,6 +35,7 @@ else
                     <td>@order.OrderDate.ToShortDateString()</td>
                     <td>@order.RequiredDate?.ToShortDateString()</td>
                     <td>@order.ShippedDate?.ToShortDateString()</td>
+
                     <td>@order.Freight?.ToString("N0") VND</td>
                 </tr>
             }
