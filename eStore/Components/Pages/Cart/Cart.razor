@@ -93,14 +93,19 @@
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
+        if (user.Identity.IsAuthenticated || user.FindFirst(c => c.Type == ClaimTypes.Role)?.Value == "Member")
         {
             var memberIdClaim = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (int.TryParse(memberIdClaim, out int memberId))
             {
                 await LoadCart(memberId.ToString());
             }
+        } else
+        {
+            NavigationManager.NavigateTo("/", forceLoad: true);
+            return;
         }
+
     }
 
     private async Task LoadCart(string cartId)

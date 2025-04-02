@@ -54,7 +54,7 @@
 
 		NavigationManager.NavigateTo("/login", forceLoad: true);
 	}
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnParametersSetAsync()
 	{
 		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
 		var user = authState.User;
