@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using BusinessObject.Contracts;
 using BusinessObject.Hubs;
 using BusinessObject.Services;
 using CurrieTechnologies.Razor.SweetAlert2;

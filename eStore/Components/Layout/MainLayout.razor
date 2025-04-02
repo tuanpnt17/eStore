@@ -14,7 +14,15 @@
 	<main>
 
 		<article class="content px-4">
-			@Body
+			<AuthorizeView Roles="Admin">
+				<Authorized>
+					@Body
+				</Authorized>
+				<NotAuthorized>
+					Bạn không có quyền xem trang này.
+					<a href="/">Trở về</a>
+				</NotAuthorized>
+			</AuthorizeView>
 		</article>
 	</main>
 	<div class="justify-content-end" id="navbarNav">
@@ -54,15 +62,15 @@
 
 		NavigationManager.NavigateTo("/login", forceLoad: true);
 	}
-	protected override async Task OnParametersSetAsync()
-	{
-		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-		var user = authState.User;
+	// protected override async Task OnParametersSetAsync()
+	// {
+	// 	var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+	// 	var user = authState.User;
 
-		if (!user.Identity.IsAuthenticated || user.FindFirst(c => c.Type == ClaimTypes.Role)?.Value == "Member")
-		{
-			NavigationManager.NavigateTo("/", forceLoad: true);
-			return;
-		}
-	}
+	// 	if (!user.Identity.IsAuthenticated || user.FindFirst(c => c.Type == ClaimTypes.Role)?.Value == "Member")
+	// 	{
+	// 		NavigationManager.NavigateTo("/", forceLoad: true);
+	// 		return;
+	// 	}
+	// }
 }
