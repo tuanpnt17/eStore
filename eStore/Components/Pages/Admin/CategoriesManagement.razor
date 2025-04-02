@@ -11,6 +11,13 @@
 @inherits LayoutComponentBase
 @inject IHubContext<CategoryHub> CategoryHubContext
 <h3>Quản lý danh mục</h3>
+<style>
+    .table-striped tbody tr.selected-row {
+        background-color: rgba(0, 0, 255, 0.3) !important; /* Blue background with 30% opacity */
+        /* Removed pointer-events: none since we want the row to remain interactive */
+    }
+
+</style>
 <div class="mb-3 d-flex">
     <input type="text" class="form-control me-2" placeholder="Tìm kiếm theo Tên hoặc Mô tả..." @bind="SearchTerm" />
     <button class="btn btn-primary" @onclick="SearchCategories">Search</button>
@@ -30,7 +37,7 @@
     <tbody>
         @foreach (var category in PagedCategories)
         {
-            <tr>
+            <tr class="@(category.CategoryId == editingCategoryId ? "selected-row" : "")">
                 <td>@category.CategoryId</td>
                 <td>@category.CategoryName</td>
                 <td>@category.CategoryDescription</td>
@@ -126,6 +133,7 @@
     private string SearchTerm = "";
     private string originalCategoryName;
     private string? CategoryNameError;
+    private int? editingCategoryId = null;
     private int CurrentPage = 1;
     private int PageSize = 5;
     private int TotalPages => (int)Math.Ceiling((double)FilteredCategories.Count / PageSize);
@@ -193,6 +201,7 @@
         SelectedCategory = new Category() { CategoryName = "" };
         originalCategoryName = "";
         isEdit = false;
+        editingCategoryId = null;
         showPopup = true;
     }
     private void EditCategory(Category category)
@@ -202,19 +211,17 @@
         originalCategoryName = category.CategoryName;
         isEdit = true;
         showPopup = true;
+        editingCategoryId = category.CategoryId;
         CategoryNameError = "";
+        StateHasChanged();
     }
 
     private void ClosePopup()
     {
         showPopup = false;
         CategoryNameError = "";
-    }
-    private void ClearCategoryNameError(ChangeEventArgs e)
-    {
-        //SelectedCategory.CategoryName = e.Value?.ToString() ?? "";
-        CategoryNameError = "";
-        //StateHasChanged();
+        editingCategoryId = null;
+        StateHasChanged();
     }
     private async Task SaveCategory()
     {
@@ -243,7 +250,7 @@
             {
                 SelectedCategory.CategoryName = originalCategoryName;
             }
-            //StateHasChanged();
+
             return;
         }
         else CategoryNameError = "";
@@ -265,7 +272,9 @@
                     await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
 
             }
+            editingCategoryId = null;
             showPopup = false;
+            StateHasChanged();
         }
         catch (Exception ex)
         {
@@ -292,10 +301,18 @@
             await CategoryService.DeleteCategoryAsync(categoryId);
 
             await CategoryHubContext.Clients.All.SendAsync("ReceiveCategoryUpdate");
+            StateHasChanged();
         }
         catch (Exception ex)
         {
             await JSRuntime.InvokeVoidAsync("alert", $"Không xóa được danh mục: {ex.Message}");
+        }
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
         }
     }
 }
