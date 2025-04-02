@@ -32,10 +32,10 @@ else
             @foreach (var order in PagedOrders)
             {
                 <tr @onclick="() => ViewOrderDetails(order.OrderId)" style="cursor: pointer;">
-                    <td>@order.OrderDate.ToShortDateString()</td>
-                    <td>@order.RequiredDate?.ToShortDateString()</td>
-                    <td>@order.ShippedDate?.ToShortDateString()</td>
-                    <td>@order.Freight</td>
+                    <td>@order.OrderDate.ToString()</td>
+                    <td>@order.RequiredDate?.ToString()</td>
+                    <td>@order.ShippedDate?.ToString()</td>
+                    <td>@order.Freight?.ToString("N0") VND</td>
                 </tr>
             }
         </tbody>

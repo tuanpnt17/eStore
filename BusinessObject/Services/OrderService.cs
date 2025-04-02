@@ -40,6 +40,16 @@ public class OrderService : IOrderService
 
     public async Task AddOrderAsync(Order order)
     {
+        foreach (var orderDetail in order.OrderDetails)
+        {
+            var product = await _unitOfWork.ProductRepository.GetByIdAsync(orderDetail.ProductId);
+            if (product != null)
+            {
+                product.UnitsInStock -= orderDetail.Quantity;
+                await _unitOfWork.ProductRepository.UpdateAsync(product);
+            }
+        }
+
         await _unitOfWork.OrderRepository.CreateOrderAsync(order);
         await _unitOfWork.Complete();
     }
